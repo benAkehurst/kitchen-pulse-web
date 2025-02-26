@@ -1,1 +1,35 @@
-// TODO: put login form and logic in here
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
+import LoginForm from './LoginForm';
+
+export default function Login() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    try {
+      console.log('email, password: ', email, password);
+      await login(email, password);
+      router.push('/dashboard');
+    } catch (err) {
+      setError('Invalid credentials');
+    }
+  };
+
+  return (
+    <LoginForm
+      handleLogin={handleLogin}
+      email={email}
+      setEmail={setEmail}
+      password={password}
+      setPassword={setPassword}
+      error={error}
+    />
+  );
+}
