@@ -1,42 +1,80 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import {
+  Menu,
+  X,
+  Home,
+  Users,
+  Package,
+  MessageSquare,
+  User,
+  ChevronFirst,
+  ChevronLast,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
+interface SidebarProps {
+  onToggle: (isCollapsed: boolean) => void;
+}
+
 const links = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/customers', label: 'Customers' },
-  { href: '/orders', label: 'Orders' },
-  { href: '/messages', label: 'Messages' },
-  { href: '/account', label: 'Account' },
+  { href: '/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/customers', label: 'Customers', icon: Users },
+  { href: '/orders', label: 'Orders', icon: Package },
+  { href: '/messages', label: 'Messages', icon: MessageSquare },
+  { href: '/account', label: 'Account', icon: User },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ onToggle }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
   const closeMenu = () => setIsOpen(false);
 
-  //TODO: change the visaul logic based on if the user is logged in or not. If not logged in then I need to hide the compoennt from the dom
+  useEffect(() => {
+    onToggle(!isCollapsed);
+  }, [isCollapsed, onToggle]);
+
+  if (pathname === '/') {
+    return null;
+  }
 
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-gray-800 text-white h-screen p-6 fixed left-0 top-0">
-        <h2 className="text-2xl font-bold mb-8">Kitchen Pulse</h2>
+      <aside
+        className={`hidden md:flex flex-col bg-gray-800 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}
+      >
+        <div className="flex items-center justify-between mb-8">
+          {!isCollapsed && (
+            <h2 className="text-2xl font-bold">Kitchen Pulse</h2>
+          )}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label="Toggle sidebar"
+            className="text-gray-400 hover:text-white"
+          >
+            {isCollapsed ? <ChevronLast /> : <ChevronFirst />}
+          </button>
+        </div>
+
         <nav>
           <ul className="space-y-4">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`block p-2 rounded ${
+                  className={`flex items-center p-2 rounded ${
                     pathname === link.href ? 'bg-gray-700' : 'hover:bg-gray-700'
                   }`}
                 >
-                  {link.label}
+                  <link.icon className="w-6 h-6" />
+                  {!isCollapsed && <span className="ml-4">{link.label}</span>}
                 </Link>
               </li>
             ))}
@@ -45,11 +83,13 @@ const Sidebar = () => {
       </aside>
 
       {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
-        <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
-          <Menu size={32} className="text-gray-800" />
-        </button>
-      </div>
+      {!isOpen && (
+        <div className="md:hidden fixed top-4 left-4 z-50">
+          <button onClick={() => setIsOpen(true)} aria-label="Open menu">
+            <Menu size={32} className="text-gray-800" />
+          </button>
+        </div>
+      )}
 
       {/* Mobile Slide-Out Menu */}
       {isOpen && (
@@ -58,7 +98,7 @@ const Sidebar = () => {
           onClick={closeMenu}
         >
           <nav
-            className="fixed left-0 top-0 w-64 bg-gray-800 text-white h-full p-6 shadow-lg z-50 transform transition-transform duration-300"
+            className="fixed left-0 top-0 w-64 bg-gray-800 text-white h-full p-6 shadow-lg z-50"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-8">
