@@ -14,7 +14,6 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      console.log('email, password: ', email, password);
       await login(email, password);
       router.push('/dashboard');
     } catch (err) {

@@ -5,6 +5,7 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import { useState } from 'react';
 import { metadata } from './metadata';
+import { usePathname } from 'next/navigation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -22,10 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const handleSidebarToggle = (open: boolean) => setIsSidebarOpen(open);
+  const pathname = usePathname();
 
-  const isLoginPage =
-    typeof window !== 'undefined' && window.location.pathname === '/';
+  // Sidebar should only hide on the "/" route
+  const isLoginPage = pathname === '/';
+
+  const handleSidebarToggle = (open: boolean) => setIsSidebarOpen(open);
 
   return (
     <html lang="en">
@@ -36,10 +39,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Show Sidebar only when not on the login page */}
         {!isLoginPage && <Sidebar onToggle={handleSidebarToggle} />}
         <main
-          className={`p-4 transition-all duration-300 ${
-            !isLoginPage && isSidebarOpen ? 'md:pl-72' : 'md:pl-24'
+          className={`p-8 transition-all duration-300 ${
+            !isLoginPage && isSidebarOpen ? 'md:pl-80' : 'md:pl-24'
           }`}
         >
           {children}
