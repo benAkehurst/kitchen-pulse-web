@@ -1,18 +1,25 @@
 import { api } from "@/lib/api";
+import { User } from "@/types/Models";
 
 export const useUser = () => {
-  const updateProfile = async (userData: any) => {
-    return api.put("/user/update-profile", userData);
-  };
-
-  const addCustomer = async (customerData: any) => {
-    return api.post("/user/add-customer", customerData);
-  };
-
-  const getCustomers = async () => {
-    const { data } = await api.get("/user/get-customers");
+  const getUserInformation = async () => {
+    const { data } = await api.get("/user/get-profile-information");
     return data;
   };
 
-  return { updateProfile, addCustomer, getCustomers };
+  const updateProfile = async (userData: User) => {
+    return api.put("/user/update-profile", userData);
+  };
+
+  const uploadAvatar = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.put("/user/upload-avatar", formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  };
+
+
+
+  return { getUserInformation, updateProfile, uploadAvatar };
 };
