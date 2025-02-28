@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useOrders } from '@/hooks/useOrders';
-import { Order } from '@/types/Order';
+import { Order } from '@/types/Models';
 
 export default function OrdersPage() {
   const { getAllOrders } = useOrders();
