@@ -13,7 +13,7 @@ const refreshAccessToken = async () => {
   } catch (error) {
     console.error("Refresh failed, logging out...");
     localStorage.removeItem("accessToken");
-    window.location.href = "/login"; // Redirect on refresh failure
+    window.location.href = "/"; // Redirect on refresh failure
     throw error; // Re-throw to cancel further requests
   }
 };
@@ -37,7 +37,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       try {
         const newAccessToken = await refreshAccessToken();
         error.config.headers.Authorization = `Bearer ${newAccessToken}`;

@@ -14,7 +14,7 @@ export const useAuth = () => {
   const logout = async () => {
     await api.post("/auth/logout");
     localStorage.removeItem("accessToken");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return { register, login, logout };
