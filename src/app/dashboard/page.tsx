@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser } from '@/hooks/useUser';
 import { Suspense } from 'react';
 import Loading from './loading';
 import DashboardCard from '@/components/DashboardCard';
 import { useOrders } from '@/hooks/useOrders';
+import { useCustomer } from '@/hooks/useCustomer';
 
 export default function DashboardPage() {
-  const { getCustomers } = useUser();
+  const { getCustomers } = useCustomer();
   const { getAllOrders } = useOrders();
   const [fetchedCustomers, setFetchedCustomers] = useState([]);
   const [fetchedOrders, setFetchedOrders] = useState([]);
