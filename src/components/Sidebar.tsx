@@ -46,13 +46,13 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col bg-gray-800 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 ${
-          isCollapsed ? 'w-20' : 'w-64'
+        className={`hidden md:flex flex-col bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 ${
+          isCollapsed ? 'w-20' : 'w-72'
         }`}
       >
         <div className="flex items-center justify-between mb-8">
           {!isCollapsed && (
-            <h2 className="text-2xl font-bold">Kitchen Pulse</h2>
+            <h2 className="text-3xl font-bold">Kitchen Pulse</h2>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -69,12 +69,14 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`flex items-center p-2 rounded ${
-                    pathname === link.href ? 'bg-gray-700' : 'hover:bg-gray-700'
+                  className={`flex items-center p-2 rounded-lg ${
+                    pathname === link.href ? 'bg-gray-800' : 'hover:bg-gray-700'
                   }`}
                 >
                   <link.icon className="w-6 h-6" />
-                  {!isCollapsed && <span className="ml-4">{link.label}</span>}
+                  {!isCollapsed && (
+                    <span className="ml-4 text-xl font-bold">{link.label}</span>
+                  )}
                 </Link>
               </li>
             ))}
