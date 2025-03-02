@@ -1,6 +1,6 @@
 'use client';
 
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Lato } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import { useState } from 'react';
@@ -8,13 +8,8 @@ import { metadata } from './metadata';
 import { usePathname } from 'next/navigation';
 import Footer from '@/components/Footer';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const lato = Lato({
+  weight: ['100', '300', '400', '700', '900'],
   subsets: ['latin'],
 });
 
@@ -37,13 +32,11 @@ export default function RootLayout({
         <title>{metadata.title as string}</title>
         <meta name="description" content={metadata.description as string} />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${lato.className} antialiased`}>
         {/* Show Sidebar only when not on the login page */}
         {!isLoginPage && <Sidebar onToggle={handleSidebarToggle} />}
         <main
-          className={`transition-all duration-300 ${
+          className={`transition-all duration-300 pt-6 ${
             !isLoginPage && isSidebarOpen ? 'md:pl-80' : 'md:pl-24'
           } ${isLoginPage && isSidebarOpen ? 'md:pl-0' : ''}`}
         >
