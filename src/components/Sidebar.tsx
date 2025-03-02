@@ -46,7 +46,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 ${
+        className={`hidden md:flex flex-col bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
           isCollapsed ? 'w-20' : 'w-72'
         }`}
       >

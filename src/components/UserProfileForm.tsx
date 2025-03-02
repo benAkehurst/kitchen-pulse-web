@@ -73,7 +73,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
   };
 
   return (
-    <div className="space-y-4 p-4 max-w-lg bg-white shadow-lg rounded-lg">
+    <div className="space-y-4 p-4 max-w-lg bg-white">
       <AvatarUpload initialAvatar={initialData.avatar} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -107,7 +107,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-blue-600 text-white p-2 rounded w-full hover:bg-blue-700"
+          className="bg-black text-white p-2 rounded w-full hover:bg-gray-800"
         >
           {isSubmitting ? 'Updating...' : 'Update Profile'}
         </button>
