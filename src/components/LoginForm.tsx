@@ -18,13 +18,13 @@ export default function LoginForm({
   error,
 }: LoginFormProps) {
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin();
         }}
-        className="bg-white p-6 rounded shadow-md w-96"
+        className="bg-white p-6 w-96"
       >
         <h2 className="text-xl font-bold mb-4">Login</h2>
         <input
@@ -32,16 +32,19 @@ export default function LoginForm({
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border w-full p-2 mb-2"
+          className="border w-full p-2 mb-2 mt-2 rounded-lg"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border w-full p-2 mb-4"
+          className="border w-full p-2 mb-4 mt-2 rounded-lg"
         />
-        <button type="submit" className="bg-blue-500 text-white w-full py-2">
+        <button
+          type="submit"
+          className="bg-black text-white w-full py-2 rounded-lg"
+        >
           Login
         </button>
         {error && <p className="text-red-500 mt-2">{error}</p>}
