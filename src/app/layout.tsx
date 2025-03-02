@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import { useState } from 'react';
 import { metadata } from './metadata';
 import { usePathname } from 'next/navigation';
+import Footer from '@/components/Footer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -42,11 +43,12 @@ export default function RootLayout({
         {/* Show Sidebar only when not on the login page */}
         {!isLoginPage && <Sidebar onToggle={handleSidebarToggle} />}
         <main
-          className={`p-8 transition-all duration-300 ${
+          className={`transition-all duration-300 ${
             !isLoginPage && isSidebarOpen ? 'md:pl-80' : 'md:pl-24'
-          }`}
+          } ${isLoginPage && isSidebarOpen ? 'md:pl-0' : ''}`}
         >
           {children}
+          <Footer />
         </main>
       </body>
     </html>
