@@ -39,5 +39,5 @@ export interface Customer {
   telephone: string;
   address: string;
   contactable: boolean;
-  ownedBy: ObjectId;
+  externalId: string;
 }

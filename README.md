@@ -36,7 +36,7 @@ Refresh Token - **TODO: Need to implement this properly**
 
 POST
 /auth/logout
-User logout - **TODO: Need to implement this**
+User logout - **DONE**
 
 **Customer**
 

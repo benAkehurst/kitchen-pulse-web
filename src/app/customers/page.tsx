@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
+import CustomerCard from '@/components/CustomerCard';
 
 interface CustomerData {
   customers: Customer[] | null;
@@ -42,7 +43,24 @@ export default function CustomersPage() {
 
   return (
     <div>
-      <h1>Customers</h1>
+      <div className="mb-4">
+        <h1 className="text-3xl mb-4">Customers</h1>
+      </div>
+      {data.customers &&
+        data.customers.map((customer: Customer) => {
+          return (
+            <CustomerCard
+              key={customer.externalId}
+              name={customer.name}
+              company={customer.company}
+              email={customer.email}
+              telephone={customer.telephone}
+              address={customer.address}
+              contactable={customer.contactable}
+              externalId={customer.externalId}
+            />
+          );
+        })}
     </div>
   );
 }
