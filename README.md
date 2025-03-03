@@ -18,19 +18,84 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## BE ROUTES - http://localhost:8080/api-docs/#/
 
-## Learn More
+**Authentication**
 
-To learn more about Next.js, take a look at the following resources:
+POST
+/auth/register
+User registration - NOT NEEDED ON FE
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+POST
+/auth/login
+User login - **DONE**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+POST
+/auth/refresh-token
+Refresh Token - **TODO: Need to implement this properly**
 
-## Deploy on Vercel
+POST
+/auth/logout
+User logout - **TODO: Need to implement this**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Customer**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+POST
+/customer/add-customer
+Allows a user to add a customer - **TODO: Need to implement this**
+
+GET
+/customer/get-customers
+Allows a user to get all their customers - **DONE**
+
+GET
+/customer/single-customer?externalId=xxx
+Allows a user to get a single customer - **TODO: Need to implement this**
+
+PUT
+/customer/update-customer?externalId=xxx
+Allows a user to update customer details - **TODO: Need to implement this**
+
+**Message**
+
+GET
+/message/get-all-messages - **TODO: Need to implement this**
+
+POST
+/message/send-new-message - **TODO: Need to implement this**
+
+PUT
+/message/edit-message - **TODO: Need to implement this**
+
+DELETE
+/message/delete-message?externalId=xxx - **TODO: Need to implement this**
+
+**Orders**
+
+POST
+/orders/upload-past-orders - **TODO: Need to implement this**
+
+POST
+/orders/upload-manual-order - **TODO: Need to implement this**
+
+GET
+/orders/all-orders
+Gets all the users orders across all customers - **DONE**
+
+GET
+/orders/orders-by-customer?externalId=xxx
+Gets all the orders for a specific customer. Need to send the id of the customer in the URL. **TODO: Need to implement this**
+
+**User**
+
+GET
+/user/get-profile-information
+Allows a user to get profile information - **DONE**
+
+PUT
+/user/update-profile
+Allows a user to update their profile - **DONE**
+
+PUT
+/user/upload-avatar
+Allows a user to update their avatar - **DONE**
