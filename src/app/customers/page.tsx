@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
 import CustomerCard from '@/components/CustomerCard';
+import Modal from '@/components/Modal';
+import NewCustomerForm from '@/components/NewCustomerForm';
 
 interface CustomerData {
   customers: Customer[] | null;
@@ -43,8 +45,20 @@ export default function CustomersPage() {
 
   return (
     <div>
-      <div className="mb-4">
+      <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Customers</h1>
+        <button
+          className="btn"
+          onClick={() =>
+            // @ts-expect-error - This is a html error
+            document.getElementById('newCustomerModal')!.showModal()
+          }
+        >
+          Add new customer
+        </button>
+        <Modal customId="newCustomerModal">
+          <NewCustomerForm />
+        </Modal>
       </div>
       {data.customers &&
         data.customers.map((customer: Customer) => {
@@ -57,7 +71,7 @@ export default function CustomersPage() {
               telephone={customer.telephone}
               address={customer.address}
               contactable={customer.contactable}
-              externalId={customer.externalId}
+              externalId={customer.externalId!}
             />
           );
         })}
