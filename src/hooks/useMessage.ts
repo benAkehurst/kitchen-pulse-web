@@ -10,7 +10,7 @@ export const useMessages = () => {
   };
 
   const deleteMessage = async (id: string) => {
-    return api.delete(`/message/delete-message/${id}`);
+    return api.delete(`/message/delete-message?externalId=${id}`);
   };
 
   return { sendMessage, editMessage, deleteMessage };

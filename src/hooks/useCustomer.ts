@@ -12,7 +12,7 @@ export const useCustomer = () => {
   };
 
   const getSingleCustomer = async (id: string) => {
-    const { data } = await api.get(`/customer/single-customer/${id}`);
+    const { data } = await api.get(`/customer/single-customer?externalId=${id}`);
     return data;
   }
 

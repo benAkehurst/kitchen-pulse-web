@@ -4,10 +4,12 @@ export interface Order {
   orderId: string;
   orderDate: string;
   orderItems: string;
-  quantity: number;
-  totalPrice: number;
+  quantity: string;
+  totalPrice: string;
   orderFileRef: string;
-  customer: ObjectId;
+  customer: string;
+  externalCustomerId: string;
+  externalId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

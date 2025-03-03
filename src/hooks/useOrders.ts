@@ -17,7 +17,7 @@ export const useOrders = () => {
   };
 
   const getOrdersByCustomer = async (customerId: string) => {
-    const { data } = await api.get(`/orders/orders-by-customer/${customerId}`);
+    const { data } = await api.get(`/orders/orders-by-customer?externalId=${customerId}`);
     return data;
   };
 
