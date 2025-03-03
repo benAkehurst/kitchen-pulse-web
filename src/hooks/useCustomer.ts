@@ -11,5 +11,10 @@ export const useCustomer = () => {
     return data;
   };
 
-  return { addCustomer, getCustomers };
+  const getSingleCustomer = async (id: string) => {
+    const { data } = await api.get(`/customer/single-customer/${id}`);
+    return data;
+  }
+
+  return { addCustomer, getCustomers, getSingleCustomer };
 };
