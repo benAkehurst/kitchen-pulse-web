@@ -30,7 +30,7 @@ export default function AccountPage() {
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Account settings</h1>
         <button
-          className="bg-black text-white p-2 rounded hover:bg-gray-800"
+          className="btn bg-black text-white p-2 rounded hover:bg-gray-800"
           onClick={() => logout()}
         >
           Logout

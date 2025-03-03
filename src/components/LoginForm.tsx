@@ -43,7 +43,7 @@ export default function LoginForm({
         />
         <button
           type="submit"
-          className="bg-black text-white w-full py-2 rounded-lg"
+          className="btn bg-black text-white w-full py-2 rounded-lg"
         >
           Login
         </button>

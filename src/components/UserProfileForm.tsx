@@ -107,7 +107,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-black text-white p-2 rounded w-full hover:bg-gray-800"
+          className="btn bg-black text-white p-2 rounded w-full hover:bg-gray-800"
         >
           {isSubmitting ? 'Updating...' : 'Update Profile'}
         </button>

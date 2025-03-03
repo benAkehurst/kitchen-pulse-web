@@ -72,7 +72,7 @@ export default function AvatarUpload({ initialAvatar }: AvatarUploadProps) {
         <div className="flex gap-4">
           <button
             onClick={handleAvatarUpload}
-            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+            className="btn bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
           >
             Confirm Upload
           </button>
