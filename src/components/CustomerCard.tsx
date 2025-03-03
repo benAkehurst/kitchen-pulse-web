@@ -2,16 +2,7 @@
 
 import Link from 'next/link';
 import { Mail, Phone, MapPin, CheckCircle, XCircle } from 'lucide-react';
-
-interface CustomerCardProps {
-  name: string;
-  company: string;
-  email: string;
-  telephone: string;
-  address: string;
-  contactable: boolean;
-  externalId: string;
-}
+import { Customer } from '@/types/Models';
 
 export default function CustomerCard({
   name,
@@ -21,7 +12,7 @@ export default function CustomerCard({
   address,
   contactable,
   externalId,
-}: CustomerCardProps) {
+}: Customer) {
   return (
     <Link
       href={`/customers/${externalId}`}

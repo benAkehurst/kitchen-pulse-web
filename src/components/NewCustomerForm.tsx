@@ -13,7 +13,13 @@ const initialFormState: Customer = {
   contactable: false,
 };
 
-export default function NewCustomerForm() {
+interface NewCustomerFormProps {
+  onAddCustomer: (customer: Customer) => void;
+}
+
+export default function NewCustomerForm({
+  onAddCustomer,
+}: NewCustomerFormProps) {
   const { addCustomer } = useCustomer();
 
   const [formData, setFormData] = useState<Customer>(initialFormState);
@@ -23,7 +29,6 @@ export default function NewCustomerForm() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    // @ts-expect-error: this is an html error
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -36,24 +41,24 @@ export default function NewCustomerForm() {
     setError(null);
     setSuccess(null);
 
-    // Simple validation
     if (!formData.name || !formData.company || !formData.email) {
       setError('Name, Company, and Email are required');
       return;
     }
 
     try {
-      await addCustomer(formData);
+      const newCustomer = await addCustomer(formData);
+      onAddCustomer(newCustomer);
+
       setSuccess('Customer added successfully!');
       setFormData(initialFormState);
 
       // Close modal after 3 seconds
       setTimeout(() => {
-        // @ts-expect-error - This is a html error
+        // @ts-expect-error - HTML dialog method
         document.getElementById('newCustomerModal')?.close();
       }, 3000);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       setError('Error adding customer. Please try again.');
     }
   };
@@ -110,7 +115,7 @@ export default function NewCustomerForm() {
         onChange={handleChange}
         placeholder="Address"
         className="textarea textarea-bordered w-full"
-      ></textarea>
+      />
 
       <label className="flex items-center space-x-2">
         <input
