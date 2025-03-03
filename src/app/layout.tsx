@@ -40,8 +40,6 @@ export default function RootLayout({
             !isLoginPage && isSidebarOpen
               ? 'md:pl-80 md:pr-6'
               : 'md:pl-24 md:pr-6'
-          } ${
-            isLoginPage && !isSidebarOpen ? 'md:pl-0 pt-0 md:pr-6' : 'md:pr-6'
           }`}
         >
           {children}

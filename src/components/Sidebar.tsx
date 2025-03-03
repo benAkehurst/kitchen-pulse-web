@@ -27,6 +27,11 @@ const links = [
   { href: '/account', label: 'Account', icon: User },
 ];
 
+const footer = [
+  { href: '/about-us', label: 'About us' },
+  { href: '/contact-us', label: 'Contact us' },
+];
+
 const Sidebar = ({ onToggle }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -46,7 +51,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
+        className={`hidden md:flex flex-col justify-between bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
           isCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -82,6 +87,20 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
             ))}
           </ul>
         </nav>
+
+        <section className="justify-end">
+          <ul className="space-y-4">
+            {footer.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href}>
+                  {!isCollapsed && (
+                    <span className="ml-4 text-xl font-bold">{item.label}</span>
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       </aside>
 
       {/* Mobile Menu Button */}

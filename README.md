@@ -42,7 +42,7 @@ User logout - **DONE**
 
 POST
 /customer/add-customer
-Allows a user to add a customer - **TODO: Need to implement this**
+Allows a user to add a customer - **DONE**
 
 GET
 /customer/get-customers
@@ -50,7 +50,7 @@ Allows a user to get all their customers - **DONE**
 
 GET
 /customer/single-customer?externalId=xxx
-Allows a user to get a single customer - **TODO: Need to implement this**
+Allows a user to get a single customer - **DONE**
 
 PUT
 /customer/update-customer?externalId=xxx
