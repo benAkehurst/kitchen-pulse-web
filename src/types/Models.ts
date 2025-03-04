@@ -6,6 +6,8 @@ export interface Order {
   orderItems: string;
   quantity: string;
   totalPrice: number;
+  category?: string,
+  itemId?: string,
   orderFileRef: string;
   customer: string;
   externalCustomerId: string;
@@ -58,5 +60,6 @@ export interface Customer {
   telephone: string;
   address: string;
   contactable: boolean;
+  internalCustomerId?: string;
   externalId?: string;
 }

@@ -70,42 +70,59 @@ export default function OrdersPage() {
       return 0;
     });
 
+  const addOrderModal = (
+    <>
+      <button
+        className="btn btn-primary"
+        onClick={() =>
+          // @ts-expect-error - HTML dialog method
+          document.getElementById('addManualOrder')!.showModal()
+        }
+      >
+        Add new order
+      </button>
+
+      <Modal customId="addManualOrder">
+        <ManualOrderForm onOrderSubmit={handleAddOrder} />
+      </Modal>
+    </>
+  );
+
+  const uploadOrdersModal = (
+    <>
+      <button
+        className="btn btn-accent ml-4"
+        onClick={() =>
+          // @ts-expect-error - HTML dialog method
+          document.getElementById('uploadOrders')!.showModal()
+        }
+      >
+        Upload orders
+      </button>
+
+      <Modal customId="uploadOrders">
+        <OrderFileUploadForm uploadPastOrders={uploadPastOrders} />
+      </Modal>
+    </>
+  );
+
   if (loading) return <div>Loading...</div>;
-  if (orders.length === 0) return <div>No orders</div>;
+  if (orders.length === 0)
+    return (
+      <div className="flex flex-row items-center justify-between">
+        <p>No orders</p>
+        <div>{uploadOrdersModal}</div>
+      </div>
+    );
 
   return (
     <div>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Orders</h1>
 
-        <div>
-          <button
-            className="btn btn-primary"
-            onClick={() =>
-              // @ts-expect-error - HTML dialog method
-              document.getElementById('addManualOrder')!.showModal()
-            }
-          >
-            Add new order
-          </button>
-
-          <Modal customId="addManualOrder">
-            <ManualOrderForm onOrderSubmit={handleAddOrder} />
-          </Modal>
-
-          <button
-            className="btn btn-accent ml-4"
-            onClick={() =>
-              // @ts-expect-error - HTML dialog method
-              document.getElementById('uploadOrders')!.showModal()
-            }
-          >
-            Upload orders
-          </button>
-
-          <Modal customId="uploadOrders">
-            <OrderFileUploadForm uploadPastOrders={uploadPastOrders} />
-          </Modal>
+        <div className="flex flex-row items-center">
+          {addOrderModal}
+          {uploadOrdersModal}
         </div>
       </div>
 

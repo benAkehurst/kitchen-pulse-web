@@ -38,27 +38,38 @@ export default function CustomersPage() {
     );
   });
 
+  const addCustomer = (
+    <>
+      <button
+        className="btn btn-primary"
+        onClick={() =>
+          // @ts-expect-error - HTML dialog method
+          document.getElementById('newCustomerModal')!.showModal()
+        }
+      >
+        Add new customer
+      </button>
+
+      <Modal customId="newCustomerModal">
+        <NewCustomerForm onAddCustomer={handleAddCustomer} />
+      </Modal>
+    </>
+  );
+
   if (loading) return <div>Loading...</div>;
-  if (customers.length === 0) return <div>No customers</div>;
+  if (customers.length === 0)
+    return (
+      <div className="flex flex-row items-center justify-between">
+        No customers {addCustomer}
+      </div>
+    );
 
   return (
     <div>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Customers</h1>
 
-        <button
-          className="btn btn-primary"
-          onClick={() =>
-            // @ts-expect-error - HTML dialog method
-            document.getElementById('newCustomerModal')!.showModal()
-          }
-        >
-          Add new customer
-        </button>
-
-        <Modal customId="newCustomerModal">
-          <NewCustomerForm onAddCustomer={handleAddCustomer} />
-        </Modal>
+        {addCustomer}
       </div>
 
       {/* Filter Bar */}
