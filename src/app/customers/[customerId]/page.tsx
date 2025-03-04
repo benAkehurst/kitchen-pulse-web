@@ -18,6 +18,7 @@ export default function SingleCustomerPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState('dateDesc');
 
   // Get customerId from the URL
   const customerId = pathname.split('/').pop();
@@ -48,6 +49,19 @@ export default function SingleCustomerPage() {
   const handleUpdatedCustomer = (updatedCustomer: Customer) => {
     setCustomer(updatedCustomer);
   };
+
+  const filteredOrders = orders.sort((a, b) => {
+    if (sortOption === 'dateDesc') {
+      return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
+    } else if (sortOption === 'dateAsc') {
+      return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
+    } else if (sortOption === 'priceDesc') {
+      return b.totalPrice - a.totalPrice;
+    } else if (sortOption === 'priceAsc') {
+      return a.totalPrice - b.totalPrice;
+    }
+    return 0;
+  });
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -98,27 +112,42 @@ export default function SingleCustomerPage() {
       {orders.length === 0 ? (
         <p>No orders found for this customer.</p>
       ) : (
-        <ul className="space-y-4">
-          {orders.map((order) => (
-            <li
-              key={order.externalId}
-              className="p-4 border rounded-lg shadow-sm"
+        <>
+          {/* Filter Bar */}
+          <div className="flex gap-4 mb-4">
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="select select-bordered"
             >
-              <Link
-                href={`/orders/${order.externalId}`}
-                className="text-blue-600 hover:underline"
+              <option value="dateDesc">Date: Newest First</option>
+              <option value="dateAsc">Date: Oldest First</option>
+              <option value="priceDesc">Price: Highest First</option>
+              <option value="priceAsc">Price: Lowest First</option>
+            </select>
+          </div>
+          <ul className="space-y-4">
+            {filteredOrders.map((order) => (
+              <li
+                key={order.externalId}
+                className="p-4 border rounded-lg shadow-sm"
               >
-                <p>
-                  <strong>Total:</strong> £{order.totalPrice}
-                </p>
-                <p>
-                  <strong>Order Date:</strong>{' '}
-                  {new Date(order.orderDate).toLocaleDateString()}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                <Link
+                  href={`/orders/${order.externalId}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  <p>
+                    <strong>Total:</strong> £{order.totalPrice}
+                  </p>
+                  <p>
+                    <strong>Order Date:</strong>{' '}
+                    {new Date(order.orderDate).toLocaleDateString()}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
