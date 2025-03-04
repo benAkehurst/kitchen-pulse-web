@@ -8,12 +8,26 @@ import { Order } from '@/types/Models';
 import { format } from 'date-fns';
 import UpdateOrderForm from '@/components/UpdateOrderForm';
 
+const initialOrder: Order = {
+  orderId: '',
+  orderDate: '',
+  orderItems: '',
+  quantity: '',
+  totalPrice: 0,
+  orderFileRef: '',
+  customer: '',
+  externalCustomerId: '',
+  externalId: '',
+  createdAt: undefined,
+  updatedAt: undefined,
+  associatedCustomer: undefined,
+};
+
 export default function SingleOrderPage() {
   const pathname = usePathname();
   const { getSingleOrder } = useOrders();
 
-  // TODO: fix this empty object
-  const [order, setOrder] = useState<Order>({});
+  const [order, setOrder] = useState<Order>(initialOrder);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
