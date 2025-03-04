@@ -28,7 +28,17 @@ export default function OrdersPage() {
   }, []);
 
   const handleAddOrder = () => {
-    console.log('order added');
+    const fetchData = async () => {
+      try {
+        const ordersList = await getAllOrders();
+        setOrders(ordersList);
+      } catch (error) {
+        console.error('Error fetching order data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   };
 
   const filteredOrders = orders
@@ -67,19 +77,35 @@ export default function OrdersPage() {
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Orders</h1>
 
-        <button
-          className="btn"
-          onClick={() =>
-            // @ts-expect-error - HTML dialog method
-            document.getElementById('addManualOrder')!.showModal()
-          }
-        >
-          Add new order
-        </button>
+        <div>
+          <button
+            className="btn"
+            onClick={() =>
+              // @ts-expect-error - HTML dialog method
+              document.getElementById('addManualOrder')!.showModal()
+            }
+          >
+            Add new order
+          </button>
 
-        <Modal customId="addManualOrder">
-          <ManualOrderForm onOrderSubmit={handleAddOrder} />
-        </Modal>
+          <Modal customId="addManualOrder">
+            <ManualOrderForm onOrderSubmit={handleAddOrder} />
+          </Modal>
+
+          <button
+            className="btn ml-4"
+            onClick={() =>
+              // @ts-expect-error - HTML dialog method
+              document.getElementById('uploadOrders')!.showModal()
+            }
+          >
+            Upload orders
+          </button>
+
+          <Modal customId="uploadOrders">
+            <div>Order upload form</div>
+          </Modal>
+        </div>
       </div>
 
       {/* Filter Bar */}

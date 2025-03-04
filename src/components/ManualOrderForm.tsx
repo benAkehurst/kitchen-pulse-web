@@ -62,7 +62,7 @@ export default function ManualOrderForm({
 
     try {
       await uploadManualOrder(formData);
-      onOrderSubmit(formData);
+      onOrderSubmit();
       setSuccess('Manual order submitted successfully!');
 
       setTimeout(() => {
