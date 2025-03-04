@@ -79,7 +79,7 @@ export default function OrdersPage() {
 
         <div>
           <button
-            className="btn"
+            className="btn btn-primary"
             onClick={() =>
               // @ts-expect-error - HTML dialog method
               document.getElementById('addManualOrder')!.showModal()
@@ -93,7 +93,7 @@ export default function OrdersPage() {
           </Modal>
 
           <button
-            className="btn ml-4"
+            className="btn btn-accent ml-4"
             onClick={() =>
               // @ts-expect-error - HTML dialog method
               document.getElementById('uploadOrders')!.showModal()

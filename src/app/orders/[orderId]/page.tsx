@@ -6,11 +6,13 @@ import { useOrders } from '@/hooks/useOrders';
 import Modal from '@/components/Modal';
 import { Order } from '@/types/Models';
 import { format } from 'date-fns';
+import UpdateOrderForm from '@/components/UpdateOrderForm';
 
 export default function SingleOrderPage() {
   const pathname = usePathname();
   const { getSingleOrder } = useOrders();
 
+  // TODO: fix this empty object
   const [order, setOrder] = useState<Order>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,8 +39,23 @@ export default function SingleOrderPage() {
     fetchOrderData();
   }, [orderId]);
 
-  const handleUpdatedOrder = (updatedOrder: Order) => {
-    setOrder(updatedOrder);
+  const handleUpdatedOrder = () => {
+    const fetchOrderData = async () => {
+      try {
+        // Fetch customer and orders in parallel
+        const [orderData] = await Promise.all([
+          getSingleOrder(orderId as string),
+        ]);
+        setOrder(orderData);
+      } catch (err) {
+        console.error('Error fetching order data:', err);
+        setError('Error fetching order details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderData();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -51,7 +68,7 @@ export default function SingleOrderPage() {
         <h1 className="text-3xl mb-4">{order.orderId}</h1>
 
         <button
-          className="btn"
+          className="btn btn-primary"
           onClick={() =>
             // @ts-expect-error - HTML dialog method
             document.getElementById('updateOrderModal')!.showModal()
@@ -61,13 +78,16 @@ export default function SingleOrderPage() {
         </button>
 
         <Modal customId="updateOrderModal">
-          <div>Update order form</div>
+          <UpdateOrderForm
+            externalId={order.externalId}
+            onUpdateOrder={handleUpdatedOrder}
+          />
         </Modal>
       </div>
 
       <div className="mb-6">
         <p>
-          <strong>Order date:</strong>
+          <strong>Order date:</strong>{' '}
           {format(new Date(order.orderDate), 'MMM d, yyyy')}
         </p>
         <p>
@@ -77,7 +97,7 @@ export default function SingleOrderPage() {
           <strong>Quantity:</strong> {order.quantity || 'N/A'}
         </p>
         <p>
-          <strong>Total price:</strong> {order.totalPrice.toFixed(2)}
+          <strong>Total price:</strong> {`£${order.totalPrice.toFixed(2)}`}
         </p>
       </div>
     </div>

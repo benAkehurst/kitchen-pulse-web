@@ -73,7 +73,7 @@ export default function SingleCustomerPage() {
         <h1 className="text-3xl mb-4">{customer.name}</h1>
 
         <button
-          className="btn"
+          className="btn btn-primary"
           onClick={() =>
             // @ts-expect-error - HTML dialog method
             document.getElementById('updateCustomerModal')!.showModal()

@@ -15,6 +15,14 @@ export interface Order {
   associatedCustomer?: Customer
 }
 
+export interface UpdatingOrder {
+  orderId: string;
+  orderDate: string;
+  orderItems: string;
+  quantity: number;
+  totalPrice: number;
+}
+
 export interface ManualOrder {
   externalCustomerId: string,
   orderItems: string,

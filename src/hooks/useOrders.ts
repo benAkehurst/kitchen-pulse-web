@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { ManualOrder } from "@/types/Models";
+import { ManualOrder, UpdatingOrder } from "@/types/Models";
 
 export const useOrders = () => {
   const uploadPastOrders = async (file: File) => {
@@ -27,5 +27,9 @@ export const useOrders = () => {
     return data;
   }
 
-  return { uploadPastOrders, uploadManualOrder, getAllOrders, getOrdersByCustomer, getSingleOrder };
+  const updateSingleOrder = async (externalId: string, orderData: UpdatingOrder) => {
+    return api.put(`/orders/update-single-order?externalId=${externalId}`, orderData)
+  }
+
+  return { uploadPastOrders, uploadManualOrder, getAllOrders, getOrdersByCustomer, getSingleOrder, updateSingleOrder };
 };
