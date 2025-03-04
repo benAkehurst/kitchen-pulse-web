@@ -4,6 +4,7 @@ import { useOrders } from '@/hooks/useOrders';
 import { Order } from '@/types/Models';
 import Modal from '@/components/Modal';
 import OrderCard from '@/components/OrderCard';
+import ManualOrderForm from '@/components/ManualOrderForm';
 
 export default function OrdersPage() {
   const { getAllOrders } = useOrders();
@@ -26,8 +27,8 @@ export default function OrdersPage() {
     fetchData();
   }, []);
 
-  const handleAddOrder = (newOrder: Order) => {
-    setOrders((prevOrders) => [newOrder, ...prevOrders]);
+  const handleAddOrder = () => {
+    console.log('order added');
   };
 
   const filteredOrders = orders
@@ -77,7 +78,7 @@ export default function OrdersPage() {
         </button>
 
         <Modal customId="addManualOrder">
-          <div>Add manual order form</div>
+          <ManualOrderForm onOrderSubmit={handleAddOrder} />
         </Modal>
       </div>
 

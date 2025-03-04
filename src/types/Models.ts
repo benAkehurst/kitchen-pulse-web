@@ -15,6 +15,14 @@ export interface Order {
   associatedCustomer?: Customer
 }
 
+export interface ManualOrder {
+  externalCustomerId: string,
+  orderItems: string,
+  quantity: string,
+  totalPrice: number,
+  orderDate: Date
+}
+
 export interface User {
   email?: string;
   name?: string;
