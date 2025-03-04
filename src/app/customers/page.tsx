@@ -11,6 +11,7 @@ export default function CustomersPage() {
   const { getCustomers } = useCustomer();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +30,13 @@ export default function CustomersPage() {
   const handleAddCustomer = (newCustomer: Customer) => {
     setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
   };
+
+  const filteredCustomers = customers.filter((customer) => {
+    const searchFields = [customer.company, customer.name];
+    return searchFields.some((field) =>
+      field?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   if (loading) return <div>Loading...</div>;
   if (customers.length === 0) return <div>No customers</div>;
@@ -53,8 +61,18 @@ export default function CustomersPage() {
         </Modal>
       </div>
 
-      {/* TODO: Add a search input to filter the list client side by searching again name or company */}
-      {customers.map((customer) => (
+      {/* Filter Bar */}
+      <div className="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search by Company or Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="input input-bordered"
+        />
+      </div>
+
+      {filteredCustomers.map((customer) => (
         <CustomerCard key={customer.externalId} {...customer} />
       ))}
     </div>

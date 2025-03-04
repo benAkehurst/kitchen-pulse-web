@@ -9,6 +9,8 @@ export default function OrdersPage() {
   const { getAllOrders } = useOrders();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('dateDesc');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,34 @@ export default function OrdersPage() {
   const handleAddOrder = (newOrder: Order) => {
     setOrders((prevOrders) => [newOrder, ...prevOrders]);
   };
+
+  const filteredOrders = orders
+    .filter((order) => {
+      const searchFields = [
+        order.orderId,
+        order.associatedCustomer?.company,
+        order.associatedCustomer?.name,
+      ];
+      return searchFields.some((field) =>
+        field?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    })
+    .sort((a, b) => {
+      if (sortOption === 'dateDesc') {
+        return (
+          new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
+        );
+      } else if (sortOption === 'dateAsc') {
+        return (
+          new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime()
+        );
+      } else if (sortOption === 'priceDesc') {
+        return b.totalPrice - a.totalPrice;
+      } else if (sortOption === 'priceAsc') {
+        return a.totalPrice - b.totalPrice;
+      }
+      return 0;
+    });
 
   if (loading) return <div>Loading...</div>;
   if (orders.length === 0) return <div>No orders</div>;
@@ -51,9 +81,28 @@ export default function OrdersPage() {
         </Modal>
       </div>
 
-      {/* TODO: Add a search input to filter the list client side by searching again name or company */}
+      {/* Filter Bar */}
+      <div className="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search by Order ID, Company, or Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="input input-bordered"
+        />
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="select select-bordered"
+        >
+          <option value="dateDesc">Date: Newest First</option>
+          <option value="dateAsc">Date: Oldest First</option>
+          <option value="priceDesc">Price: Highest First</option>
+          <option value="priceAsc">Price: Lowest First</option>
+        </select>
+      </div>
 
-      {orders.map((order) => (
+      {filteredOrders.map((order) => (
         <OrderCard key={order.externalId} {...order} />
       ))}
     </div>

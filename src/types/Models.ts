@@ -5,7 +5,7 @@ export interface Order {
   orderDate: string;
   orderItems: string;
   quantity: string;
-  totalPrice: string;
+  totalPrice: number;
   orderFileRef: string;
   customer: string;
   externalCustomerId: string;

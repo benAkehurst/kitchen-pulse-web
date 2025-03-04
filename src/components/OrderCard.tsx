@@ -46,7 +46,7 @@ export default function OrderCard({
           </div>
 
           <div className="flex items-center gap-2">
-            <PoundSterling size={16} /> <span>£{totalPrice}</span>
+            <PoundSterling size={16} /> <span>£{totalPrice.toFixed(2)}</span>
           </div>
 
           <div className="flex items-center gap-2">
