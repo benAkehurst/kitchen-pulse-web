@@ -6,6 +6,8 @@ import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
 import { Customer, Order } from '@/types/Models';
 import Link from 'next/link';
+import Modal from '@/components/Modal';
+import UpdateCustomerForm from '@/components/UpdateCustomerForm';
 
 export default function SingleCustomerPage() {
   const pathname = usePathname();
@@ -43,13 +45,36 @@ export default function SingleCustomerPage() {
     fetchCustomerData();
   }, [customerId]);
 
+  const handleUpdatedCustomer = (updatedCustomer: Customer) => {
+    setCustomer(updatedCustomer);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!customer) return <div>Customer not found</div>;
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">{customer.name}</h1>
+      <div className="flex flex-row items-center justify-between mb-4">
+        <h1 className="text-3xl mb-4">{customer.name}</h1>
+
+        <button
+          className="btn"
+          onClick={() =>
+            // @ts-expect-error - HTML dialog method
+            document.getElementById('updateCustomerModal')!.showModal()
+          }
+        >
+          Update customer details
+        </button>
+
+        <Modal customId="updateCustomerModal">
+          <UpdateCustomerForm
+            onUpdateCustomer={handleUpdatedCustomer}
+            externalId={customer.externalId!}
+          />
+        </Modal>
+      </div>
 
       <div className="mb-6">
         <p>

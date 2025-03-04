@@ -16,5 +16,9 @@ export const useCustomer = () => {
     return data;
   }
 
-  return { addCustomer, getCustomers, getSingleCustomer };
+  const updateSingleCustomer = async (customerData: Customer) => {
+    return api.put(`/customer/update-customer?externalId=${customerData.externalId}`, customerData)
+  }
+
+  return { addCustomer, getCustomers, getSingleCustomer, updateSingleCustomer };
 };

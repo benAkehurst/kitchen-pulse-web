@@ -54,7 +54,7 @@ Allows a user to get a single customer - **DONE**
 
 PUT
 /customer/update-customer?externalId=xxx
-Allows a user to update customer details - **TODO: Need to implement this**
+Allows a user to update customer details - **DONE**
 
 **Message**
 
