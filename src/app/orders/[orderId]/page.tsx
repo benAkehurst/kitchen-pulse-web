@@ -72,6 +72,15 @@ export default function SingleOrderPage() {
     fetchOrderData();
   };
 
+  const handleDownloadFile = (fileUrl: string) => {
+    const link = document.createElement('a');
+    link.setAttribute('download', '');
+    link.href = fileUrl;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!order) return <div>Order not found</div>;
@@ -100,19 +109,27 @@ export default function SingleOrderPage() {
       </div>
 
       <div className="mb-6">
-        <p>
+        <p className="mb-2">
           <strong>Order date:</strong>{' '}
           {format(new Date(order.orderDate), 'MMM d, yyyy')}
         </p>
-        <p>
+        <p className="my-2">
           <strong>Order Items:</strong> {order.orderItems}
         </p>
-        <p>
+        <p className="my-2">
           <strong>Quantity:</strong> {order.quantity || 'N/A'}
         </p>
-        <p>
+        <p className="mt-2">
           <strong>Total price:</strong> {`£${order.totalPrice.toFixed(2)}`}
         </p>
+        {order.orderFileRef && (
+          <button
+            className="btn btn-accent my-2"
+            onClick={() => handleDownloadFile(order.orderFileRef)}
+          >
+            Download original order file
+          </button>
+        )}
       </div>
     </div>
   );
