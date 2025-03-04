@@ -12,6 +12,7 @@ export interface Order {
   externalId: string;
   createdAt?: Date;
   updatedAt?: Date;
+  associatedCustomer?: Customer
 }
 
 export interface User {

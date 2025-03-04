@@ -53,6 +53,7 @@ export default function CustomersPage() {
         </Modal>
       </div>
 
+      {/* TODO: Add a search input to filter the list client side by searching again name or company */}
       {customers.map((customer) => (
         <CustomerCard key={customer.externalId} {...customer} />
       ))}
