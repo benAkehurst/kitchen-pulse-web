@@ -5,7 +5,9 @@ export const useOrders = () => {
   const uploadPastOrders = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    return api.post("/orders/upload-past-orders", formData);
+    return api.post("/orders/upload-past-orders", formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   };
 
   const uploadManualOrder = async (orderData: ManualOrder) => {

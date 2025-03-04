@@ -5,9 +5,10 @@ import { Order } from '@/types/Models';
 import Modal from '@/components/Modal';
 import OrderCard from '@/components/OrderCard';
 import ManualOrderForm from '@/components/ManualOrderForm';
+import OrderFileUploadForm from '@/components/OrderFileUploadForm';
 
 export default function OrdersPage() {
-  const { getAllOrders } = useOrders();
+  const { getAllOrders, uploadPastOrders } = useOrders();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -103,7 +104,7 @@ export default function OrdersPage() {
           </button>
 
           <Modal customId="uploadOrders">
-            <div>Order upload form</div>
+            <OrderFileUploadForm uploadPastOrders={uploadPastOrders} />
           </Modal>
         </div>
       </div>
