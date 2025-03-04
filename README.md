@@ -76,7 +76,7 @@ POST
 /orders/upload-past-orders - **TODO: Need to implement this**
 
 POST
-/orders/upload-manual-order - **TODO: Need to implement this**
+/orders/upload-manual-order - **DONE**
 
 GET
 /orders/all-orders
@@ -84,7 +84,11 @@ Gets all the users orders across all customers - **DONE**
 
 GET
 /orders/orders-by-customer?externalId=xxx
-Gets all the orders for a specific customer. Need to send the id of the customer in the URL. **TODO: Need to implement this**
+Gets all the orders for a specific customer. Need to send the id of the customer in the URL. **DONE**
+
+GET
+/orders/get-single-order?externalId=xxx
+Gets single order information **TODO: Need to implement this**
 
 **User**
 
