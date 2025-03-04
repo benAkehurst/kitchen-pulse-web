@@ -1,8 +1,14 @@
 import { api } from "@/lib/api";
+import { SendMessageData } from "@/types/Models";
 
 export const useMessages = () => {
-  const sendMessage = async (content: string, customerId: string) => {
-    return api.post("/message/send-new-message", { content, customerId });
+  const getAllMessages = async () => {
+    const { data } = await api.get('/message/get-all-messages');
+    return data;
+  }
+
+  const sendMessage = async (messageData: SendMessageData) => {
+    return api.post("/message/send-new-message", messageData);
   };
 
   const editMessage = async (id: string, newContent: string) => {
@@ -13,5 +19,5 @@ export const useMessages = () => {
     return api.delete(`/message/delete-message?externalId=${id}`);
   };
 
-  return { sendMessage, editMessage, deleteMessage };
+  return { getAllMessages, sendMessage, editMessage, deleteMessage };
 };

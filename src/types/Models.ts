@@ -53,6 +53,15 @@ export interface Message {
   messageSent: boolean;
 }
 
+export interface SendMessageData {
+  customerExternalId: string;
+  messageContents: string;
+  messageFormat: string;
+  orderReference?: string;
+  scheduled?: boolean;
+  sendOnDate?: Date;
+}
+
 export interface Customer {
   name: string;
   company: string;
