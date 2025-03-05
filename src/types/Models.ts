@@ -42,8 +42,7 @@ export interface User {
 }
 
 export interface Message {
-  orderReference: ObjectId;
-  customerReference: ObjectId;
+  externalCustomerReference: string;
   externalId: string;
   repeat: boolean;
   repeatUntil: Date;
@@ -52,7 +51,17 @@ export interface Message {
   messageContents: string;
   messageFormat: string;
   messageSent: boolean;
+  orderReference?: ObjectId;
+  customerReference?: ObjectId;
   associatedCustomer?: AssociatedCustomer;
+}
+
+export interface EditMessage {
+  messageContents: string;
+  sendOnDate: Date;
+  scheduled: boolean;
+  repeat: boolean;
+  repeatUntil: Date
 }
 
 export interface SendMessageData {
@@ -81,4 +90,5 @@ export interface AssociatedCustomer {
   email: string;
   telephone: string;
   externalId: string;
+  contactable?: boolean
 }
