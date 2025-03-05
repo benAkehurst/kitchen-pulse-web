@@ -6,8 +6,6 @@ import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
 import { Customer, Order } from '@/types/Models';
 import Link from 'next/link';
-import Modal from '@/components/Modal';
-import UpdateCustomerForm from '@/components/UpdateCustomerForm';
 import SendMessageWrapper from '@/components/SendMessageWrapper';
 import UpdateCustomerWrapper from '@/components/UpdateCustomerWrapper';
 
@@ -71,6 +69,9 @@ export default function SingleCustomerPage() {
 
   return (
     <div className="p-6">
+      <Link href="/customers" className="my-4 btn">
+        Back
+      </Link>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">{customer.name}</h1>
         <div className="flex">

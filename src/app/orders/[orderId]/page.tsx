@@ -7,6 +7,7 @@ import Modal from '@/components/Modal';
 import { Order } from '@/types/Models';
 import { format } from 'date-fns';
 import UpdateOrderForm from '@/components/UpdateOrderForm';
+import Link from 'next/link';
 
 const initialOrder: Order = {
   orderId: '',
@@ -87,6 +88,9 @@ export default function SingleOrderPage() {
 
   return (
     <div className="p-6">
+      <Link href="/orders" className="my-4 btn">
+        Back
+      </Link>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">{order.orderId}</h1>
 
