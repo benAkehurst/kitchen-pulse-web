@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Loading from './loading';
-import DashboardCard from '@/components/DashboardCard';
+import DashboardCard from '@/components/Cards/DashboardCard';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useUser } from '@/hooks/useUser';

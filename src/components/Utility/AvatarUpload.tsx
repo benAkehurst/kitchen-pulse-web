@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
-import Avatar from './Avatar';
+import Avatar from '../UI/Avatar';
 
 interface AvatarUploadProps {
   initialAvatar?: string;

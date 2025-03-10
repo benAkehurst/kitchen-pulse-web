@@ -5,9 +5,9 @@ import { useMessages } from '@/hooks/useMessage';
 import { Customer, Message, Order } from '@/types/Models';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
-import Modal from '@/components/Modal';
-import SendMessageModal from '@/components/SendMessageModal';
-import MessageCard from '@/components/MessageCard';
+import Modal from '@/components/UI/Modal';
+import SendMessageModal from '@/components/Forms/SendMessageModal';
+import MessageCard from '@/components/Cards/MessageCard';
 
 export default function MessagesPage() {
   const { getAllMessages } = useMessages();

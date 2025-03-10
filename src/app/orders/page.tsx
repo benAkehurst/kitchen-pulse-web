@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { Order } from '@/types/Models';
-import Modal from '@/components/Modal';
-import OrderCard from '@/components/OrderCard';
-import ManualOrderForm from '@/components/ManualOrderForm';
-import OrderFileUploadForm from '@/components/OrderFileUploadForm';
+import Modal from '@/components/UI/Modal';
+import OrderCard from '@/components/Cards/OrderCard';
+import ManualOrderForm from '@/components/Forms/ManualOrderForm';
+import OrderFileUploadForm from '@/components/Forms/OrderFileUploadForm';
 
 export default function OrdersPage() {
   const { getAllOrders, uploadPastOrders } = useOrders();

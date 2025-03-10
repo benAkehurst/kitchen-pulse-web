@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useUser } from '@/hooks/useUser';
 import { User } from '@/types/Models';
-import AvatarUpload from './AvatarUpload';
+import AvatarUpload from './Utility/AvatarUpload';
 
 const userSchema = z.object({
   name: z.string().optional(),

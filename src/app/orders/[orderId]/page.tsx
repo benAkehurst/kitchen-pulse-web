@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useOrders } from '@/hooks/useOrders';
-import Modal from '@/components/Modal';
+import Modal from '@/components/UI/Modal';
 import { Order } from '@/types/Models';
 import { format } from 'date-fns';
-import UpdateOrderForm from '@/components/UpdateOrderForm';
+import UpdateOrderForm from '@/components/Forms/UpdateOrderForm';
 import Link from 'next/link';
 
 const initialOrder: Order = {

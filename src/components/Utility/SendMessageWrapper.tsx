@@ -1,6 +1,6 @@
 import { Customer, Order } from '@/types/Models';
-import Modal from './Modal';
-import SendMessageModal from './SendMessageModal';
+import Modal from '../UI/Modal';
+import SendMessageModal from '../Forms/SendMessageModal';
 
 interface SendMessageWrapperProps {
   customers: Customer[];

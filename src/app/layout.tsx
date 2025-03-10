@@ -2,11 +2,10 @@
 
 import { Lato } from 'next/font/google';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/Layout/Sidebar';
 import { useState } from 'react';
 import { metadata } from './metadata';
 import { usePathname } from 'next/navigation';
-import Footer from '@/components/Footer';
 
 const lato = Lato({
   weight: ['100', '300', '400', '700', '900'],

@@ -1,7 +1,7 @@
 'use client';
 
-import Login from '@/components/Auth';
-import RegisterCTA from '@/components/RegisterCTA';
+import Login from '@/components/Layout/Auth';
+import RegisterCTA from '@/components/Utility/RegisterCTA';
 
 export default function LoginPage() {
   return (

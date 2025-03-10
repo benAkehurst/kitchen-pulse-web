@@ -6,8 +6,8 @@ import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
 import { Customer, Order } from '@/types/Models';
 import Link from 'next/link';
-import SendMessageWrapper from '@/components/SendMessageWrapper';
-import UpdateCustomerWrapper from '@/components/UpdateCustomerWrapper';
+import SendMessageWrapper from '@/components/Utility/SendMessageWrapper';
+import UpdateCustomerWrapper from '@/components/Utility/UpdateCustomerWrapper';
 
 export default function SingleCustomerPage() {
   const pathname = usePathname();

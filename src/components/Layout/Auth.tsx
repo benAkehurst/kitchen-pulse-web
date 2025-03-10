@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import LoginForm from './LoginForm';
+import LoginForm from '../Forms/LoginForm';
 
 export default function Login() {
   const { login } = useAuth();

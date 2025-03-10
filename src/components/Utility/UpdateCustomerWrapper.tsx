@@ -1,6 +1,6 @@
 import { Customer } from '@/types/Models';
-import Modal from './Modal';
-import UpdateCustomerForm from './UpdateCustomerForm';
+import Modal from '../UI/Modal';
+import UpdateCustomerForm from '../Forms/UpdateCustomerForm';
 
 interface UpdateCustomerWrapper {
   handleUpdatedCustomer: (updatedCustomer: Customer) => void;

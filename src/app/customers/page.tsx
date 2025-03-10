@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
-import CustomerCard from '@/components/CustomerCard';
-import Modal from '@/components/Modal';
-import NewCustomerForm from '@/components/NewCustomerForm';
+import CustomerCard from '@/components/Cards/CustomerCard';
+import Modal from '@/components/UI/Modal';
+import NewCustomerForm from '@/components/Forms/NewCustomerForm';
 
 export default function CustomersPage() {
   const { getCustomers } = useCustomer();
