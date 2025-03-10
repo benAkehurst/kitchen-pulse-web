@@ -15,6 +15,7 @@ import {
   Bot,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 interface SidebarProps {
   onToggle: (isCollapsed: boolean) => void;
@@ -25,9 +26,12 @@ const links = [
   { href: '/customers', label: 'Customers', icon: Users },
   { href: '/orders', label: 'Orders', icon: Package },
   { href: '/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/assistant', label: 'Assistant', icon: Bot },
   { href: '/account', label: 'Account', icon: User },
 ];
+
+if (isFeatureEnabled('enableAI')) {
+  links.splice(4, 0, { href: '/assistant', label: 'Assistant', icon: Bot });
+}
 
 const footer = [
   { href: '/about-us', label: 'About us' },

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useMessages } from '@/hooks/useMessage';
 import { useUser } from '@/hooks/useUser';
 import { Customer, Order, SendMessageData } from '@/types/Models';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 interface SendMessageModalProps {
   customers: Customer[];
@@ -32,6 +33,12 @@ export default function SendMessageModal({
     scheduled: false,
     sendOnDate: undefined,
   });
+
+  const contactMethods = ['sms', 'email'];
+
+  if (isFeatureEnabled('enableWhatsapp')) {
+    contactMethods.splice(1, 0, 'whatsapp');
+  }
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -164,7 +171,7 @@ export default function SendMessageModal({
         <div className="flex flex-col gap-4">
           <label className="font-medium">Message Type:</label>
           <div className="flex flex-col gap-2">
-            {['sms', 'whatsapp', 'email'].map((type) => (
+            {contactMethods.map((type) => (
               <label key={type} className="flex items-center gap-2">
                 <input
                   type="radio"
