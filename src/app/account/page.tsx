@@ -4,7 +4,7 @@ import { useUser } from '@/hooks/useUser';
 import { useAuth } from '@/hooks/useAuth';
 import { User } from '@/types/Models';
 import { useEffect, useState } from 'react';
-import UserProfileForm from '@/components/UserProfileForm';
+import UserProfileForm from '@/components/Forms/UserProfileForm';
 
 export default function AccountPage() {
   const { getUserInformation } = useUser();
