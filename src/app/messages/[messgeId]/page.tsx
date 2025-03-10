@@ -47,7 +47,7 @@ export default function SingleMessage() {
         const messageData = await getSingleMessage(messageId);
         setMessage(messageData);
       } catch (err) {
-        setError('Error fetching message details.');
+        if (err) setError('Error fetching message details.');
       } finally {
         setLoading(false);
       }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 interface OrderFileUploadFormProps {
-  uploadPastOrders: (file: File) => Promise<any>;
+  uploadPastOrders: (file: File) => Promise<unknown>;
 }
 
 export default function OrderFileUploadForm({

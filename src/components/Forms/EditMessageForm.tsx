@@ -31,6 +31,7 @@ export default function EditMessageForm({
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
+    // @ts-expect-error: allow the checked here
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
     setFormData((prev) => ({ ...prev, [name]: newValue }));

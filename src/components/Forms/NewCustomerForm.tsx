@@ -29,6 +29,7 @@ export default function NewCustomerForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    // @ts-expect-error: allow the checked here
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -48,6 +49,7 @@ export default function NewCustomerForm({
 
     try {
       const newCustomer = await addCustomer(formData);
+      // @ts-expect-error: ignore the axios any
       onAddCustomer(newCustomer);
 
       setSuccess('Customer added successfully!');

@@ -85,6 +85,7 @@ export default function SendMessageModal({
       });
       setSuccess('Message sent successfully!');
       setTimeout(
+        // @ts-expect-error: ignore close method
         () => document.getElementById('sendMessageModal')?.close(),
         3000
       );

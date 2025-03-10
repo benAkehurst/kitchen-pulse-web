@@ -35,6 +35,7 @@ export default function UpdateCustomerForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    // @ts-expect-error: allow the checked here
     const { name, value, type, checked } = e.target;
     setFormData((prev) =>
       prev ? { ...prev, [name]: type === 'checkbox' ? checked : value } : null

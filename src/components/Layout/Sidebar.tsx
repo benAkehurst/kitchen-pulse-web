@@ -22,20 +22,25 @@ interface SidebarProps {
 }
 
 const links = [
-  { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/customers', label: 'Customers', icon: Users },
-  { href: '/orders', label: 'Orders', icon: Package },
-  { href: '/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/account', label: 'Account', icon: User },
+  { href: '/dashboard', label: 'Dashboard', icon: Home, id: 0 },
+  { href: '/customers', label: 'Customers', icon: Users, id: 1 },
+  { href: '/orders', label: 'Orders', icon: Package, id: 2 },
+  { href: '/messages', label: 'Messages', icon: MessageSquare, id: 3 },
+  { href: '/account', label: 'Account', icon: User, id: 4 },
 ];
 
 if (isFeatureEnabled('enableAI')) {
-  links.splice(4, 0, { href: '/assistant', label: 'Assistant', icon: Bot });
+  links.splice(4, 0, {
+    href: '/assistant',
+    label: 'Assistant',
+    icon: Bot,
+    id: 5,
+  });
 }
 
 const footer = [
-  { href: '/about-us', label: 'About us' },
-  { href: '/contact-us', label: 'Contact us' },
+  { href: '/about-us', label: 'About us', id: 0 },
+  { href: '/contact-us', label: 'Contact us', id: 1 },
 ];
 
 const Sidebar = ({ onToggle }: SidebarProps) => {
@@ -77,7 +82,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
         <nav>
           <ul className="space-y-4">
             {links.map((link) => (
-              <li key={link.href}>
+              <li key={link.id}>
                 <Link
                   href={link.href}
                   className={`flex items-center p-2 rounded-lg ${
@@ -97,7 +102,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
         <section className="justify-end">
           <ul className="space-y-4">
             {footer.map((item) => (
-              <li key={item.href}>
+              <li key={item.id}>
                 <Link href={item.href}>
                   {!isCollapsed && (
                     <span className="ml-4 text-xl font-bold">{item.label}</span>
@@ -136,7 +141,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
             </div>
             <ul className="space-y-4">
               {links.map((link) => (
-                <li key={link.href}>
+                <li key={link.id}>
                   <Link
                     href={link.href}
                     className={`block p-2 rounded ${
