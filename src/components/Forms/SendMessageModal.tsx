@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useMessages } from '@/hooks/useMessage';
+import { useUser } from '@/hooks/useUser';
 import { Customer, Order, SendMessageData } from '@/types/Models';
 
 interface SendMessageModalProps {
@@ -14,18 +15,49 @@ export default function SendMessageModal({
   orders,
 }: SendMessageModalProps) {
   const { sendMessage } = useMessages();
+  const { getUserInformation } = useUser();
+
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [userSignature, setUserSignature] = useState<string>('');
+  const [useSignature, setUseSignature] = useState(false);
 
   const [formData, setFormData] = useState<SendMessageData>({
     customerExternalId: '',
     messageContents: '',
     messageFormat: 'sms',
+    emailSubject: '',
     orderReference: undefined,
     scheduled: false,
     sendOnDate: undefined,
   });
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const user = await getUserInformation();
+        const { name, company, telephone, email } = user;
+
+        if (!name && !company && !telephone && !email) {
+          setError(
+            'Update your details on the /account page to use a signature.'
+          );
+          return;
+        }
+
+        const signatureParts = [name, company, telephone || email].filter(
+          Boolean
+        );
+        setUserSignature(signatureParts.join(', '));
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+        setError('Error fetching user info. Please try again.');
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const handleNextStep = () => setStep((prev) => prev + 1);
   const handlePrevStep = () => setStep((prev) => prev - 1);
@@ -35,12 +67,30 @@ export default function SendMessageModal({
     setSuccess(null);
 
     try {
-      await sendMessage({ ...formData, scheduled: isScheduled });
+      const messageWithSignature = useSignature
+        ? `${formData.messageContents} - ${userSignature}`
+        : formData.messageContents;
+
+      await sendMessage({
+        ...formData,
+        messageContents: messageWithSignature,
+        scheduled: isScheduled,
+      });
       setSuccess('Message sent successfully!');
       setTimeout(
         () => document.getElementById('sendMessageModal')?.close(),
         3000
       );
+      setFormData({
+        customerExternalId: '',
+        messageContents: '',
+        messageFormat: 'sms',
+        emailSubject: '',
+        orderReference: undefined,
+        scheduled: false,
+        sendOnDate: undefined,
+      });
+      setStep(1);
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Error sending message. Please try again.');
@@ -128,21 +178,22 @@ export default function SendMessageModal({
                 {type.toUpperCase()}
               </label>
             ))}
-
-            {selectedCustomer && !selectedCustomer.telephone && (
-              <p className="text-red-500">
-                SMS and WhatsApp require a phone number. Update the customer
-                information on the customer page.
-              </p>
-            )}
-
-            {selectedCustomer && !selectedCustomer.email && (
-              <p className="text-red-500">
-                Email requires an email address. Update the customer information
-                on the customer page.
-              </p>
-            )}
           </div>
+
+          {formData.messageFormat === 'email' && (
+            <>
+              <label className="font-medium">Email Subject:</label>
+              <input
+                value={formData.emailSubject}
+                onChange={(e) =>
+                  setFormData({ ...formData, emailSubject: e.target.value })
+                }
+                type="text"
+                placeholder="Your email subject"
+                className="input"
+              />
+            </>
+          )}
 
           <label className="font-medium">Message Content:</label>
           <textarea
@@ -155,11 +206,22 @@ export default function SendMessageModal({
             className="textarea textarea-bordered"
           />
 
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={useSignature}
+              onChange={() => setUseSignature(!useSignature)}
+            />
+            {`Include Signature (Preview: - ${userSignature}) `}
+          </label>
+
           {(formData.messageFormat === 'sms' ||
             formData.messageFormat === 'whatsapp') && (
             <p className="text-sm text-gray-500">
-              {characterLimit - formData.messageContents.length} characters
-              remaining
+              {characterLimit -
+                formData.messageContents.length -
+                (useSignature ? userSignature.length + 3 : 0)}{' '}
+              characters remaining
             </p>
           )}
 

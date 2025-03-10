@@ -68,6 +68,7 @@ export interface SendMessageData {
   customerExternalId: string;
   messageContents: string;
   messageFormat: string;
+  emailSubject?: string;
   orderReference?: string;
   scheduled?: boolean;
   sendOnDate?: Date;
