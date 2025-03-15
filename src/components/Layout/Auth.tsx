@@ -14,8 +14,8 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      await login(email, password);
-      router.push('/dashboard');
+      const { accessToken } = await login(email, password);
+      router.push(`/dashboard?token=${accessToken}`);
     } catch (err) {
       if (err) setError('Invalid credentials');
     }

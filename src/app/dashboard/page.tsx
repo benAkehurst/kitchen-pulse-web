@@ -7,6 +7,7 @@ import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useUser } from '@/hooks/useUser';
 import { Customer, Order, User } from '@/types/Models';
+import { useRouter } from 'next/navigation';
 
 interface DashboardData {
   customers: Customer[] | null;
@@ -15,6 +16,7 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { getUserInformation } = useUser();
   const { getCustomers } = useCustomer();
   const { getAllOrders } = useOrders();
@@ -43,6 +45,14 @@ export default function DashboardPage() {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+      localStorage.setItem('accessToken', token);
+      router.replace('/dashboard');
+    }
   }, []);
 
   if (loading) return <Loading />;
