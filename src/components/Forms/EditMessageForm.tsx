@@ -17,10 +17,14 @@ export default function EditMessageForm({
 
   const [formData, setFormData] = useState<EditMessage>({
     messageContents: initialData.messageContents,
-    sendOnDate: new Date(initialData.sendOnDate),
+    sendOnDate: initialData.sendOnDate
+      ? new Date(initialData.sendOnDate)
+      : new Date(),
     scheduled: initialData.scheduled,
     repeat: initialData.repeat,
-    repeatUntil: new Date(initialData.repeatUntil || Date.now()),
+    repeatUntil: initialData.repeatUntil
+      ? new Date(initialData.repeatUntil)
+      : new Date(),
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -80,8 +84,24 @@ export default function EditMessageForm({
         <label className="label">Send On Date</label>
         <input
           type="date"
-          value={formData.sendOnDate.toISOString().split('T')[0]}
-          onChange={(e) => handleDateChange(new Date(e.target.value))}
+          value={
+            formData.sendOnDate instanceof Date &&
+            !isNaN(formData.sendOnDate.getTime())
+              ? formData.sendOnDate.toISOString().split('T')[0]
+              : ''
+          }
+          min={new Date().toISOString().split('T')[0]} // Prevents past dates
+          onChange={(e) => {
+            const selectedDate = new Date(e.target.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize today's date to midnight
+
+            if (selectedDate >= today) {
+              handleDateChange(selectedDate);
+            } else {
+              alert('You cannot select a past date!');
+            }
+          }}
           className="input input-bordered w-full"
           required
         />

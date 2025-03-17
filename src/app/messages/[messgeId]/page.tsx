@@ -63,9 +63,33 @@ export default function SingleMessage() {
 
   return (
     <div className="p-6">
-      <Link href="/messages" className="my-4 btn">
-        Back
-      </Link>
+      <div className="flex flex-row items-center justify-between mb-4">
+        <Link href="/messages" className="my-4 btn">
+          Back
+        </Link>
+
+        <div className="flex flex-row items-center">
+          <>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                // @ts-expect-error - HTML dialog method
+                document.getElementById('editMessageModal')!.showModal()
+              }
+            >
+              Edit message
+            </button>
+
+            <Modal customId="editMessageModal">
+              <EditMessageForm
+                externalId={messageId as string}
+                initialData={message}
+              />
+            </Modal>
+          </>
+        </div>
+      </div>
+
       <h1 className="text-2xl font-semibold mb-4">Message Details</h1>
       {message.associatedCustomer && (
         <p className="mb-2 flex items-center gap-2">
@@ -118,26 +142,6 @@ export default function SingleMessage() {
           This message was sent on{' '}
           <strong>{format(new Date(message.sendOnDate), 'MMM d, yyyy')}</strong>
         </p>
-      )}
-      {!message.messageSent && (
-        <>
-          <button
-            className="btn btn-primary"
-            onClick={() =>
-              // @ts-expect-error - HTML dialog method
-              document.getElementById('editMessageModal')!.showModal()
-            }
-          >
-            Edit message
-          </button>
-
-          <Modal customId="editMessageModal">
-            <EditMessageForm
-              externalId={messageId as string}
-              initialData={message}
-            />
-          </Modal>
-        </>
       )}
     </div>
   );
