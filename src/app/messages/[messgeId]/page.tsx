@@ -20,6 +20,7 @@ const initialMessage: Message = {
   messageFormat: '',
   messageSent: false,
   externalId: '',
+  createdAt: undefined,
   associatedCustomer: {
     name: '',
     company: '',
@@ -74,6 +75,10 @@ export default function SingleMessage() {
         </p>
       )}
       <p className="my-2 flex items-center gap-2">
+        <Send size={18} />
+        <strong>Message:</strong> {message.messageContents}
+      </p>
+      <p className="my-2 flex items-center gap-2">
         {message.associatedCustomer?.contactable ? (
           <CheckCircle size={18} className="text-green-500" />
         ) : (
@@ -85,10 +90,6 @@ export default function SingleMessage() {
       <p className="my-2 flex items-center gap-2">
         <Mail size={18} />
         <strong>Message Format:</strong> {message.messageFormat}
-      </p>
-      <p className="my-2 flex items-center gap-2">
-        <Send size={18} />
-        <strong>Message:</strong> {message.messageContents}
       </p>
       <p className="my-2 flex items-center gap-2">
         {message.scheduled ? (
@@ -106,6 +107,12 @@ export default function SingleMessage() {
         </p>
       )}
       {message.messageSent && (
+        <p className="my-2 flex items-center gap-2">
+          <CheckCircle size={18} className="text-green-500" />
+          Message Sent
+        </p>
+      )}
+      {message.messageSent && message.sendOnDate && (
         <p className="my-2 flex items-center gap-2">
           <CheckCircle size={18} className="text-green-500" />
           This message was sent on{' '}
