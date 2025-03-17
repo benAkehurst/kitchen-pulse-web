@@ -34,6 +34,7 @@ export default function SendMessageModal({
     orderReference: undefined,
     scheduled: false,
     sendOnDate: undefined,
+    multipleRecipients: false,
   });
 
   const contactMethods = ['sms', 'email'];
