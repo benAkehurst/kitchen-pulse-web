@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Message } from '@/types/Models';
+import { format } from 'date-fns';
 
 interface MessageCardProps {
   message: Message;
@@ -24,6 +25,7 @@ export default function MessageCard({ message }: MessageCardProps) {
     messageSent,
     sendOnDate,
     associatedCustomer,
+    createdAt,
   } = message;
 
   return (
@@ -53,6 +55,14 @@ export default function MessageCard({ message }: MessageCardProps) {
         )}
 
         <p className="text-gray-800">&quot;{messageContents}&quot;</p>
+
+        <div className="space-y-2 text-sm text-gray-500">
+          {createdAt && (
+            <div className="flex items-center gap-2">
+              Message created on {format(createdAt, 'PPPpp')}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Send size={16} />

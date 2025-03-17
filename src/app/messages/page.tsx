@@ -8,6 +8,7 @@ import { useOrders } from '@/hooks/useOrders';
 import Modal from '@/components/UI/Modal';
 import SendMessageModal from '@/components/Forms/SendMessageModal';
 import MessageCard from '@/components/Cards/MessageCard';
+import { compareAsc, compareDesc, parseISO, isValid } from 'date-fns';
 
 export default function MessagesPage() {
   const { getAllMessages } = useMessages();
@@ -19,6 +20,7 @@ export default function MessagesPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('dateDesc');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,12 +42,33 @@ export default function MessagesPage() {
     fetchData();
   }, []);
 
-  const filteredMessages = messages.filter((message: Message) => {
-    const searchFields = [message.messageContents];
-    return searchFields.some((field) =>
-      field?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredMessages = messages
+    .filter((message) => {
+      const searchFields = [message.messageContents];
+      return searchFields.some((field) =>
+        field?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    })
+    .sort((a, b) => {
+      if (!a.createdAt || !b.createdAt) return 0; // Handle missing timestamps
+
+      // Ensure createdAt is a Date object
+      const dateA =
+        a.createdAt instanceof Date ? a.createdAt : parseISO(a.createdAt);
+      const dateB =
+        b.createdAt instanceof Date ? b.createdAt : parseISO(b.createdAt);
+
+      // Ensure parsed dates are valid
+      if (!isValid(dateA) || !isValid(dateB)) return 0;
+
+      if (sortOption === 'dateDesc') {
+        return compareDesc(dateA, dateB);
+      } else if (sortOption === 'dateAsc') {
+        return compareAsc(dateA, dateB);
+      }
+
+      return 0;
+    });
 
   const sendMessageModal = (
     <>
@@ -75,14 +98,23 @@ export default function MessagesPage() {
         {sendMessageModal}
       </div>
 
+      {/* Filter Bar */}
       <div className="flex gap-4 mb-4">
         <input
           type="text"
-          placeholder="Search by message content"
+          placeholder="Search by Order ID, Company, or Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input input-bordered"
         />
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="select select-bordered"
+        >
+          <option value="dateDesc">Date: Newest First</option>
+          <option value="dateAsc">Date: Oldest First</option>
+        </select>
       </div>
 
       {filteredMessages.map((message: Message) => (

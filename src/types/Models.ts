@@ -54,6 +54,7 @@ export interface Message {
   orderReference?: ObjectId;
   customerReference?: ObjectId;
   associatedCustomer?: AssociatedCustomer;
+  createdAt?: Date
 }
 
 export interface EditMessage {
