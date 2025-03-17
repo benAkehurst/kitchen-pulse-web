@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Message } from '@/types/Models';
 import { useMessages } from '@/hooks/useMessage';
 import Modal from '@/components/UI/Modal';
@@ -31,8 +31,9 @@ const initialMessage: Message = {
 };
 
 export default function SingleMessage() {
+  const router = useRouter();
   const pathname = usePathname();
-  const { getSingleMessage } = useMessages();
+  const { getSingleMessage, deleteMessage } = useMessages();
 
   const [message, setMessage] = useState<Message>(initialMessage);
   const [loading, setLoading] = useState(true);
@@ -142,6 +143,20 @@ export default function SingleMessage() {
           This message was sent on{' '}
           <strong>{format(new Date(message.sendOnDate), 'MMM d, yyyy')}</strong>
         </p>
+      )}
+      {!message.messageSent && (
+        <button
+          className="btn btn-error"
+          onClick={() =>
+            deleteMessage(message.externalId).then((res) => {
+              if (res) {
+                router.replace('/messages');
+              }
+            })
+          }
+        >
+          Delete Message
+        </button>
       )}
     </div>
   );
