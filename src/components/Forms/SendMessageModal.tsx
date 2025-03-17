@@ -23,9 +23,11 @@ export default function SendMessageModal({
   const [success, setSuccess] = useState<string | null>(null);
   const [userSignature, setUserSignature] = useState<string>('');
   const [useSignature, setUseSignature] = useState(false);
+  const [multipleRecipients, setMultipleRecipients] = useState(false);
+  const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<SendMessageData>({
-    customerExternalId: '',
+    customerExternalId: [''],
     messageContents: '',
     messageFormat: 'sms',
     emailSubject: '',
@@ -69,6 +71,21 @@ export default function SendMessageModal({
   const handleNextStep = () => setStep((prev) => prev + 1);
   const handlePrevStep = () => setStep((prev) => prev - 1);
 
+  const toggleCustomerSelection = (customerId: string) => {
+    setSelectedCustomers((prev) => {
+      const newSelection = prev.includes(customerId)
+        ? prev.filter((id) => id !== customerId)
+        : [...prev, customerId];
+
+      setFormData((prevForm) => ({
+        ...prevForm,
+        customerExternalId: newSelection.length > 0 ? newSelection : [''],
+      }));
+
+      return newSelection;
+    });
+  };
+
   const handleSendMessage = async (isScheduled: boolean) => {
     setError(null);
     setSuccess(null);
@@ -80,24 +97,30 @@ export default function SendMessageModal({
 
       await sendMessage({
         ...formData,
+        customerExternalId: multipleRecipients
+          ? selectedCustomers
+          : formData.customerExternalId,
         messageContents: messageWithSignature,
         scheduled: isScheduled,
+        multipleRecipients: multipleRecipients,
       });
       setSuccess('Message sent successfully!');
       setTimeout(
-        // @ts-expect-error: ignore close method
+        // @ts-expect-error: ignore this html stuff
         () => document.getElementById('sendMessageModal')?.close(),
         3000
       );
       setFormData({
-        customerExternalId: '',
+        customerExternalId: [''],
         messageContents: '',
         messageFormat: 'sms',
         emailSubject: '',
         orderReference: undefined,
         scheduled: false,
         sendOnDate: undefined,
+        multipleRecipients: false,
       });
+      setSelectedCustomers([]);
       setStep(1);
     } catch (error) {
       console.error('Error sending message:', error);
@@ -114,18 +137,18 @@ export default function SendMessageModal({
   const characterLimit = getCharacterLimit();
 
   const selectedCustomer = useMemo(
-    () => customers.find((c) => c.externalId === formData.customerExternalId),
+    () =>
+      customers.find((c) =>
+        formData.customerExternalId.includes(c.externalId!)
+      ) || null,
     [formData.customerExternalId, customers]
   );
 
   const availableMessageTypes = useMemo(() => {
+    if (!selectedCustomer) return [];
     const types = [];
-    if (selectedCustomer?.telephone) {
-      types.push('sms', 'whatsapp');
-    }
-    if (selectedCustomer?.email) {
-      types.push('email');
-    }
+    if (selectedCustomer.telephone) types.push('sms', 'whatsapp');
+    if (selectedCustomer.email) types.push('email');
     return types;
   }, [selectedCustomer]);
 
@@ -138,28 +161,71 @@ export default function SendMessageModal({
 
       {step === 1 && (
         <div className="flex flex-col gap-4">
-          <label className="font-medium">Pick a Customer:</label>
-          <select
-            value={formData.customerExternalId}
-            onChange={(e) =>
-              setFormData({ ...formData, customerExternalId: e.target.value })
-            }
-            className="select select-bordered"
-          >
-            <option value="">Select Customer</option>
-            {customers.map((customer) => (
-              <option key={customer.externalId} value={customer.externalId}>
-                {customer.name}{' '}
-                {`: ${customer.company ? customer.company : ''}`}
-              </option>
-            ))}
-          </select>
+          <label className="font-medium">Send to:</label>
+          <div className="flex gap-4">
+            <button
+              className={`btn ${!multipleRecipients ? 'btn-primary' : ''}`}
+              onClick={() => setMultipleRecipients(false)}
+            >
+              One Customer
+            </button>
+            <button
+              className={`btn ${multipleRecipients ? 'btn-primary' : ''}`}
+              onClick={() => setMultipleRecipients(true)}
+            >
+              Many Customers
+            </button>
+          </div>
+
+          {!multipleRecipients ? (
+            <select
+              value={
+                multipleRecipients ? '' : formData.customerExternalId[0] || ''
+              }
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  customerExternalId: [e.target.value],
+                })
+              }
+              className="select select-bordered"
+            >
+              <option value="">Select Customer</option>
+              {customers.map((customer) => (
+                <option key={customer.externalId} value={customer.externalId}>
+                  {customer.name}{' '}
+                  {`: ${customer.company ? customer.company : ''}`}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {customers.map((customer) => (
+                <label
+                  key={customer.externalId}
+                  className="flex items-center gap-2"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.customerExternalId.includes(
+                      customer.externalId!
+                    )}
+                    onChange={() =>
+                      toggleCustomerSelection(customer.externalId!)
+                    }
+                  />
+                  {customer.name}{' '}
+                  {customer.company ? ` - ${customer.company}` : ''}
+                </label>
+              ))}
+            </div>
+          )}
 
           <div className="flex justify-between">
             <button className="btn" disabled>
               Back
             </button>
-            {formData.customerExternalId && (
+            {(formData.customerExternalId || selectedCustomers.length > 0) && (
               <button className="btn btn-primary" onClick={handleNextStep}>
                 Next
               </button>
@@ -178,7 +244,10 @@ export default function SendMessageModal({
                   type="radio"
                   value={type}
                   checked={formData.messageFormat === type}
-                  disabled={!availableMessageTypes.includes(type)}
+                  disabled={
+                    !availableMessageTypes.includes(type) &&
+                    availableMessageTypes.length > 0
+                  }
                   onChange={() =>
                     setFormData({ ...formData, messageFormat: type })
                   }
@@ -271,6 +340,16 @@ export default function SendMessageModal({
             }
             className="input input-bordered"
           />
+
+          <label className="font-medium">Preview Message</label>
+          <div className="border rounded-lg shadow-md p-4">
+            {formData.messageFormat === 'email' && (
+              <p>{formData.emailSubject}</p>
+            )}
+            <p>
+              {formData.messageContents} - {useSignature && userSignature}
+            </p>
+          </div>
 
           <div className="flex justify-between">
             <button className="btn" onClick={handlePrevStep}>

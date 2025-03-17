@@ -65,13 +65,14 @@ export interface EditMessage {
 }
 
 export interface SendMessageData {
-  customerExternalId: string;
+  customerExternalId: Array<string>;
   messageContents: string;
   messageFormat: string;
   emailSubject?: string;
   orderReference?: string;
   scheduled?: boolean;
-  sendOnDate?: Date;
+  sendOnDate?: Date | null;
+  multipleRecipients?: boolean;
 }
 
 export interface Customer {
