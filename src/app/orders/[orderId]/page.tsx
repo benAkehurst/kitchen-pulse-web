@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import UpdateOrderForm from '@/components/Forms/UpdateOrderForm';
 import Link from 'next/link';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 const initialOrder: Order = {
   orderId: '',
@@ -31,7 +32,6 @@ export default function SingleOrderPage() {
   const { addNotification } = useNotifications();
   const [order, setOrder] = useState<Order>(initialOrder);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Get orderId from the URL
   const orderId = pathname.split('/').pop();
@@ -93,7 +93,6 @@ export default function SingleOrderPage() {
 
   if (loading) return <LoadingOverlay />;
 
-  if (error) return <div>{error}</div>;
   if (!order) return <div>Order not found</div>;
 
   return (
