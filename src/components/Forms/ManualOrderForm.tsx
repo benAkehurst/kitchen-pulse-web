@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
 import { ManualOrder } from '@/types/Models';
+import { useNotifications } from '@/context/notificationsContext';
 
 interface ManualOrderFormProps {
   onOrderSubmit: () => void;
@@ -14,7 +15,8 @@ export default function ManualOrderForm({
 }: ManualOrderFormProps) {
   const { uploadManualOrder } = useOrders();
   const { getCustomers } = useCustomer();
-
+  const { addNotification } = useNotifications();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [customers, setCustomers] = useState<
     { name: string; externalId: string }[]
   >([]);
@@ -26,19 +28,18 @@ export default function ManualOrderForm({
     orderDate: new Date(),
   });
 
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const customerData = await getCustomers();
         setCustomers(customerData);
       } catch {
-        setError('Error fetching customers.');
+        addNotification({
+          message: 'Error fetching customers. Please try again.',
+          type: 'error',
+        });
       }
     };
-
     fetchCustomers();
   }, []);
 
@@ -57,29 +58,32 @@ export default function ManualOrderForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
+    setIsSubmitting(true);
     try {
       await uploadManualOrder(formData);
       onOrderSubmit();
-      setSuccess('Manual order submitted successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Manual order submitted successfully.',
+        type: 'success',
+      });
 
       setTimeout(() => {
         // @ts-expect-error - HTML dialog method
         document.getElementById('manualOrderModal')?.close();
       }, 3000);
     } catch {
-      setError('Error submitting order. Please try again.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Error submitting order. Please try again.',
+        type: 'error',
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Add Manual Order</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
 
       <select
         name="externalCustomerId"
@@ -140,7 +144,11 @@ export default function ManualOrderForm({
       </div>
 
       <button type="submit" className="btn btn-primary w-full">
-        Submit Order
+        {isSubmitting ? (
+          <span className="loading loading-spinner loading-md"></span>
+        ) : (
+          'Submit Order'
+        )}
       </button>
     </form>
   );

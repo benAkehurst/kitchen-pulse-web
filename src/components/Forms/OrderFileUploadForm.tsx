@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
+import { useNotifications } from '@/context/notificationsContext';
 interface OrderFileUploadFormProps {
   uploadPastOrders: (file: File) => Promise<unknown>;
 }
@@ -9,12 +9,10 @@ interface OrderFileUploadFormProps {
 export default function OrderFileUploadForm({
   uploadPastOrders,
 }: OrderFileUploadFormProps) {
+  const { addNotification } = useNotifications();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -22,23 +20,28 @@ export default function OrderFileUploadForm({
 
   const handleFileUpload = async () => {
     if (!selectedFile) return;
+    setIsSubmitting(true);
 
     try {
       setIsUploading(true);
       await uploadPastOrders(selectedFile);
-      showMessage('success', 'Order file uploaded successfully.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Order file uploaded successfully.',
+        type: 'success',
+      });
       setSelectedFile(null);
     } catch (error) {
-      console.error('Error uploading order file:', error);
-      showMessage('error', 'Failed to upload order file.');
+      if (error) {
+        setIsSubmitting(false);
+        addNotification({
+          message: 'Failed to upload order file.',
+          type: 'error',
+        });
+      }
     } finally {
       setIsUploading(false);
     }
-  };
-
-  const showMessage = (type: 'success' | 'error', text: string) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
@@ -63,7 +66,11 @@ export default function OrderFileUploadForm({
             onClick={handleFileUpload}
             className="btn bg-blue-600 text-white hover:bg-blue-700"
           >
-            Confirm Upload
+            {isSubmitting ? (
+              <span className="loading loading-spinner loading-md"></span>
+            ) : (
+              'Confirm Upload'
+            )}
           </button>
           <button
             onClick={() => setSelectedFile(null)}
@@ -75,16 +82,6 @@ export default function OrderFileUploadForm({
       )}
 
       {isUploading && <p className="text-blue-600">Uploading Order File...</p>}
-
-      {message && (
-        <p
-          className={
-            message.type === 'success' ? 'text-green-600' : 'text-red-600'
-          }
-        >
-          {message.text}
-        </p>
-      )}
     </div>
   );
 }

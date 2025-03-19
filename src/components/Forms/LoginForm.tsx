@@ -1,5 +1,9 @@
 'use client';
 
+import { useNotifications } from '@/context/notificationsContext';
+import LoadingOverlay from '../UI/LoadingOverlay';
+import { useState } from 'react';
+
 interface LoginFormProps {
   handleLogin: () => void;
   email: string;
@@ -17,11 +21,15 @@ export default function LoginForm({
   setPassword,
   error,
 }: LoginFormProps) {
+  const { loading } = useNotifications();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   return (
     <div className="flex items-center justify-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          setIsSubmitting(true);
           handleLogin();
         }}
         className="bg-white p-6 w-96"
@@ -45,9 +53,14 @@ export default function LoginForm({
           type="submit"
           className="btn bg-black text-white w-full py-2 rounded-lg"
         >
-          Login
+          {isSubmitting ? (
+            <span className="loading loading-spinner loading-md"></span>
+          ) : (
+            'Login'
+          )}
         </button>
         {error && <p className="text-red-500 mt-2">{error}</p>}
+        {loading && <LoadingOverlay />}
       </form>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
+import { useNotifications } from '@/context/notificationsContext';
 
 const initialFormState: Customer = {
   name: '',
@@ -21,10 +22,9 @@ export default function NewCustomerForm({
   onAddCustomer,
 }: NewCustomerFormProps) {
   const { addCustomer } = useCustomer();
-
+  const { addNotification } = useNotifications();
   const [formData, setFormData] = useState<Customer>(initialFormState);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,11 +39,14 @@ export default function NewCustomerForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
+    setIsSubmitting(true);
 
     if (!formData.name || !formData.company || !formData.email) {
-      setError('Name, Company, and Email are required');
+      addNotification({
+        message: 'Name, Company, and Email are required. Please try again.',
+        type: 'error',
+      });
+      setIsSubmitting(false);
       return;
     }
 
@@ -51,8 +54,11 @@ export default function NewCustomerForm({
       const newCustomer = await addCustomer(formData);
       // @ts-expect-error: ignore the axios any
       onAddCustomer(newCustomer);
-
-      setSuccess('Customer added successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Customer added successfully.',
+        type: 'success',
+      });
       setFormData(initialFormState);
 
       // Close modal after 3 seconds
@@ -61,16 +67,17 @@ export default function NewCustomerForm({
         document.getElementById('newCustomerModal')?.close();
       }, 3000);
     } catch {
-      setError('Error adding customer. Please try again.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Error adding customer. Please try again.',
+        type: 'error',
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Add New Customer</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
 
       <input
         type="text"
@@ -131,7 +138,11 @@ export default function NewCustomerForm({
       </label>
 
       <button type="submit" className="btn btn-primary w-full">
-        Submit
+        {isSubmitting ? (
+          <span className="loading loading-spinner loading-md"></span>
+        ) : (
+          'Submit'
+        )}
       </button>
     </form>
   );

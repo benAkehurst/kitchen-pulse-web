@@ -9,12 +9,14 @@ import Modal from '@/components/UI/Modal';
 import SendMessageModal from '@/components/Forms/SendMessageModal';
 import MessageCard from '@/components/Cards/MessageCard';
 import { compareAsc, compareDesc, parseISO, isValid } from 'date-fns';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 export default function MessagesPage() {
   const { getAllMessages } = useMessages();
   const { getCustomers } = useCustomer();
   const { getAllOrders } = useOrders();
-
+  const { addNotification } = useNotifications();
   const [messages, setMessages] = useState<Message[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -34,7 +36,12 @@ export default function MessagesPage() {
         setCustomers(customerList);
         setOrders(orderList);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        if (error) {
+          addNotification({
+            message: 'Error fetching message data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -88,7 +95,8 @@ export default function MessagesPage() {
     </>
   );
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingOverlay />;
+
   if (messages.length === 0) return <div>No messages {sendMessageModal}</div>;
 
   return (

@@ -6,9 +6,12 @@ import { Customer } from '@/types/Models';
 import CustomerCard from '@/components/Cards/CustomerCard';
 import Modal from '@/components/UI/Modal';
 import NewCustomerForm from '@/components/Forms/NewCustomerForm';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 export default function CustomersPage() {
   const { getCustomers } = useCustomer();
+  const { addNotification } = useNotifications();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +22,12 @@ export default function CustomersPage() {
         const customerList = await getCustomers();
         setCustomers(customerList);
       } catch (error) {
-        console.error('Error fetching customer data:', error);
+        if (error) {
+          addNotification({
+            message: 'Error fetching customer data',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -56,7 +64,8 @@ export default function CustomersPage() {
     </>
   );
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingOverlay />;
+
   if (customers.length === 0)
     return (
       <div className="flex flex-row items-center justify-between">

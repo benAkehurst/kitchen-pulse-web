@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
+import { useNotifications } from '@/context/notificationsContext';
+import LoadingOverlay from '../UI/LoadingOverlay';
 
 interface UpdateCustomerFormProps {
   externalId: string;
@@ -14,10 +16,9 @@ export default function UpdateCustomerForm({
   onUpdateCustomer,
 }: UpdateCustomerFormProps) {
   const { getSingleCustomer, updateSingleCustomer } = useCustomer();
-
+  const { addNotification } = useNotifications();
   const [formData, setFormData] = useState<Customer | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -25,7 +26,10 @@ export default function UpdateCustomerForm({
         const customer = await getSingleCustomer(externalId);
         setFormData(customer);
       } catch {
-        setError('Error fetching customer data.');
+        addNotification({
+          message: 'Error fetching customer data. Please try again.',
+          type: 'error',
+        });
       }
     };
 
@@ -45,14 +49,16 @@ export default function UpdateCustomerForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
-
-    setError(null);
-    setSuccess(null);
+    setIsSubmitting(true);
 
     try {
       await updateSingleCustomer(formData);
       onUpdateCustomer(formData);
-      setSuccess('Customer updated successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Customer updated successfully',
+        type: 'success',
+      });
 
       // Close modal after 3 seconds
       setTimeout(() => {
@@ -60,18 +66,19 @@ export default function UpdateCustomerForm({
         document.getElementById('updateCustomerModal')?.close();
       }, 3000);
     } catch {
-      setError('Error updating customer. Please try again.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Error updating customer. Please try again.',
+        type: 'error',
+      });
     }
   };
 
-  if (!formData) return <p>Loading...</p>;
+  if (!formData) return <LoadingOverlay />;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Update Customer</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
 
       <input
         type="text"
@@ -132,7 +139,11 @@ export default function UpdateCustomerForm({
       </label>
 
       <button type="submit" className="btn btn-primary w-full">
-        Update Customer
+        {isSubmitting ? (
+          <span className="loading loading-spinner loading-md"></span>
+        ) : (
+          'Update Customer'
+        )}
       </button>
     </form>
   );

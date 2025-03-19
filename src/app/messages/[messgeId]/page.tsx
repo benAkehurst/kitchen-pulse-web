@@ -9,6 +9,8 @@ import EditMessageForm from '@/components/Forms/EditMessageForm';
 import { format } from 'date-fns';
 import { User, Mail, Calendar, Send, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 const initialMessage: Message = {
   externalCustomerReference: '',
@@ -33,11 +35,10 @@ const initialMessage: Message = {
 export default function SingleMessage() {
   const router = useRouter();
   const pathname = usePathname();
+  const { addNotification } = useNotifications();
   const { getSingleMessage, deleteMessage } = useMessages();
-
   const [message, setMessage] = useState<Message>(initialMessage);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const messageId = pathname.split('/').pop();
 
@@ -49,7 +50,12 @@ export default function SingleMessage() {
         const messageData = await getSingleMessage(messageId);
         setMessage(messageData);
       } catch (err) {
-        if (err) setError('Error fetching message details.');
+        if (err) {
+          addNotification({
+            message: 'Error fetching message data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -58,8 +64,8 @@ export default function SingleMessage() {
     fetchMessageData();
   }, [messageId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <LoadingOverlay />;
+
   if (!message) return <div>Message not found</div>;
 
   return (

@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Loading from './loading';
 import DashboardCard from '@/components/Cards/DashboardCard';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useUser } from '@/hooks/useUser';
 import { Customer, Order, User } from '@/types/Models';
 import { useRouter } from 'next/navigation';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
 
 interface DashboardData {
   customers: Customer[] | null;
@@ -55,7 +55,7 @@ export default function DashboardPage() {
     }
   }, []);
 
-  if (loading) return <Loading />;
+  if (loading) return <LoadingOverlay />;
 
   const { customers, orders, user } = data;
 

@@ -8,16 +8,17 @@ import { Customer, Order } from '@/types/Models';
 import Link from 'next/link';
 import SendMessageWrapper from '@/components/Utility/SendMessageWrapper';
 import UpdateCustomerWrapper from '@/components/Utility/UpdateCustomerWrapper';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 export default function SingleCustomerPage() {
   const pathname = usePathname();
   const { getSingleCustomer } = useCustomer();
   const { getOrdersByCustomer } = useOrders();
-
+  const { addNotification } = useNotifications();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState('dateDesc');
 
   // Get customerId from the URL
@@ -36,8 +37,12 @@ export default function SingleCustomerPage() {
         setCustomer(customerData);
         setOrders(customerOrders);
       } catch (err) {
-        console.error('Error fetching customer data:', err);
-        setError('Error fetching customer details.');
+        if (err) {
+          addNotification({
+            message: 'Error fetching customer data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -63,8 +68,7 @@ export default function SingleCustomerPage() {
     return 0;
   });
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <LoadingOverlay />;
   if (!customer) return <div>Customer not found</div>;
 
   return (

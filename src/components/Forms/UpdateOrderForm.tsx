@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { Order, UpdatingOrder } from '@/types/Models';
+import { useNotifications } from '@/context/notificationsContext';
+import LoadingOverlay from '../UI/LoadingOverlay';
 
 interface UpdateOrderFormProps {
   externalId: string;
@@ -14,10 +16,9 @@ export default function UpdateOrderForm({
   onUpdateOrder,
 }: UpdateOrderFormProps) {
   const { getSingleOrder, updateSingleOrder } = useOrders();
-
+  const { addNotification } = useNotifications();
   const [formData, setFormData] = useState<UpdatingOrder | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -31,7 +32,10 @@ export default function UpdateOrderForm({
           orderDate: order.orderDate || new Date().toISOString(),
         });
       } catch {
-        setError('Error fetching order data.');
+        addNotification({
+          message: 'Error fetching order data. please try again.',
+          type: 'error',
+        });
       }
     };
 
@@ -52,15 +56,17 @@ export default function UpdateOrderForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
-
-    setError(null);
-    setSuccess(null);
+    setIsSubmitting(true);
 
     try {
       await updateSingleOrder(externalId, formData);
       const updatedOrder = await getSingleOrder(externalId);
       onUpdateOrder(updatedOrder);
-      setSuccess('Order updated successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Order updated successfully',
+        type: 'success',
+      });
 
       // Close modal after 3 seconds
       setTimeout(() => {
@@ -68,18 +74,19 @@ export default function UpdateOrderForm({
         document.getElementById('updateOrderModal')?.close();
       }, 3000);
     } catch {
-      setError('Error updating order. Please try again.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Error updating order, please try again.',
+        type: 'error',
+      });
     }
   };
 
-  if (!formData) return <p>Loading...</p>;
+  if (!formData) return <LoadingOverlay />;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Update Order</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
 
       <input
         type="text"
@@ -130,7 +137,11 @@ export default function UpdateOrderForm({
       />
 
       <button type="submit" className="btn btn-primary w-full">
-        Update Order
+        {isSubmitting ? (
+          <span className="loading loading-spinner loading-md"></span>
+        ) : (
+          'Update Order'
+        )}
       </button>
     </form>
   );

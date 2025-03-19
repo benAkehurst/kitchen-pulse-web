@@ -6,9 +6,12 @@ import Modal from '@/components/UI/Modal';
 import OrderCard from '@/components/Cards/OrderCard';
 import ManualOrderForm from '@/components/Forms/ManualOrderForm';
 import OrderFileUploadForm from '@/components/Forms/OrderFileUploadForm';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 export default function OrdersPage() {
   const { getAllOrders, uploadPastOrders } = useOrders();
+  const { addNotification } = useNotifications();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,7 +23,12 @@ export default function OrdersPage() {
         const ordersList = await getAllOrders();
         setOrders(ordersList);
       } catch (error) {
-        console.error('Error fetching order data:', error);
+        if (error) {
+          addNotification({
+            message: 'Error fetching order data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -34,7 +42,12 @@ export default function OrdersPage() {
         const ordersList = await getAllOrders();
         setOrders(ordersList);
       } catch (error) {
-        console.error('Error fetching order data:', error);
+        if (error) {
+          addNotification({
+            message: 'Error fetching order data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -106,7 +119,8 @@ export default function OrdersPage() {
     </>
   );
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingOverlay />;
+
   if (orders.length === 0)
     return (
       <div className="flex flex-row items-center justify-between">

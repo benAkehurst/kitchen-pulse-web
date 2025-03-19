@@ -8,6 +8,7 @@ import { Order } from '@/types/Models';
 import { format } from 'date-fns';
 import UpdateOrderForm from '@/components/Forms/UpdateOrderForm';
 import Link from 'next/link';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
 
 const initialOrder: Order = {
   orderId: '',
@@ -27,7 +28,7 @@ const initialOrder: Order = {
 export default function SingleOrderPage() {
   const pathname = usePathname();
   const { getSingleOrder } = useOrders();
-
+  const { addNotification } = useNotifications();
   const [order, setOrder] = useState<Order>(initialOrder);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +45,12 @@ export default function SingleOrderPage() {
         const [orderData] = await Promise.all([getSingleOrder(orderId)]);
         setOrder(orderData);
       } catch (err) {
-        console.error('Error fetching order data:', err);
-        setError('Error fetching order details.');
+        if (err) {
+          addNotification({
+            message: 'Error fetching order data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -63,8 +68,12 @@ export default function SingleOrderPage() {
         ]);
         setOrder(orderData);
       } catch (err) {
-        console.error('Error fetching order data:', err);
-        setError('Error fetching order details.');
+        if (err) {
+          addNotification({
+            message: 'Error fetching order data. Please try again.',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -82,7 +91,8 @@ export default function SingleOrderPage() {
     link.remove();
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingOverlay />;
+
   if (error) return <div>{error}</div>;
   if (!order) return <div>Order not found</div>;
 

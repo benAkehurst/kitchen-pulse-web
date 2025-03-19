@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { EditMessage } from '@/types/Models';
 import { useMessages } from '@/hooks/useMessage';
+import { useNotifications } from '@/context/notificationsContext';
 
 interface EditMessageFormProps {
   externalId: string;
@@ -14,7 +15,8 @@ export default function EditMessageForm({
   initialData,
 }: EditMessageFormProps) {
   const { editMessage } = useMessages();
-
+  const { addNotification } = useNotifications();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<EditMessage>({
     messageContents: initialData.messageContents,
     sendOnDate: initialData.sendOnDate
@@ -26,9 +28,6 @@ export default function EditMessageForm({
       ? new Date(initialData.repeatUntil)
       : new Date(),
   });
-
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -47,12 +46,15 @@ export default function EditMessageForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
+    setIsSubmitting(true);
 
     try {
       await editMessage(externalId, formData);
-      setSuccess('Message updated successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Message updated successfully.',
+        type: 'success',
+      });
 
       // Close modal after 3 seconds
       setTimeout(() => {
@@ -60,16 +62,17 @@ export default function EditMessageForm({
         document.getElementById('updateOrderModal')?.close();
       }, 3000);
     } catch {
-      setError('Error updating message. Please try again.');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Error updating message. Please try again.',
+        type: 'success',
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Edit Message</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
 
       <textarea
         name="messageContents"
@@ -145,7 +148,11 @@ export default function EditMessageForm({
       )}
 
       <button type="submit" className="btn btn-primary w-full">
-        Update Message
+        {isSubmitting ? (
+          <span className="loading loading-spinner loading-md"></span>
+        ) : (
+          'Update Message'
+        )}
       </button>
     </form>
   );

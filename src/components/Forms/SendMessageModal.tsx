@@ -5,6 +5,7 @@ import { useMessages } from '@/hooks/useMessage';
 import { useUser } from '@/hooks/useUser';
 import { Customer, Order, SendMessageData } from '@/types/Models';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { useNotifications } from '@/context/notificationsContext';
 
 interface SendMessageModalProps {
   customers: Customer[];
@@ -17,7 +18,7 @@ export default function SendMessageModal({
 }: SendMessageModalProps) {
   const { sendMessage } = useMessages();
   const { getUserInformation } = useUser();
-
+  const { addNotification } = useNotifications();
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -25,6 +26,7 @@ export default function SendMessageModal({
   const [useSignature, setUseSignature] = useState(false);
   const [multipleRecipients, setMultipleRecipients] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<SendMessageData>({
     customerExternalId: [''],
@@ -90,6 +92,7 @@ export default function SendMessageModal({
   const handleSendMessage = async (isScheduled: boolean) => {
     setError(null);
     setSuccess(null);
+    setIsSubmitting(true);
 
     try {
       const messageWithSignature = useSignature
@@ -105,7 +108,11 @@ export default function SendMessageModal({
         scheduled: isScheduled,
         multipleRecipients: multipleRecipients,
       });
-      setSuccess('Message sent successfully!');
+      setIsSubmitting(false);
+      addNotification({
+        message: 'Message sent successfully',
+        type: 'success',
+      });
       setTimeout(
         // @ts-expect-error: ignore this html stuff
         () => document.getElementById('sendMessageModal')?.close(),
@@ -124,8 +131,13 @@ export default function SendMessageModal({
       setSelectedCustomers([]);
       setStep(1);
     } catch (error) {
-      console.error('Error sending message:', error);
-      setError('Error sending message. Please try again.');
+      if (error) {
+        setIsSubmitting(false);
+        addNotification({
+          message: 'Error sending message. Please try again.',
+          type: 'error',
+        });
+      }
     }
   };
 
@@ -361,7 +373,11 @@ export default function SendMessageModal({
                 onClick={() => handleSendMessage(false)}
                 className="btn btn-primary"
               >
-                Send Now
+                {isSubmitting ? (
+                  <span className="loading loading-spinner loading-md"></span>
+                ) : (
+                  'Send now'
+                )}
               </button>
               <button
                 onClick={() => handleSendMessage(true)}

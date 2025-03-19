@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useUser } from '@/hooks/useUser';
 import { User } from '@/types/Models';
 import AvatarUpload from '@/components/Utility/AvatarUpload';
+import { useNotifications } from '@/context/notificationsContext';
 
 const userSchema = z.object({
   name: z.string().optional(),
@@ -23,6 +24,7 @@ interface UserProfileFormProps {
 
 export default function UserProfileForm({ initialData }: UserProfileFormProps) {
   const { updateProfile } = useUser();
+  const { addNotification } = useNotifications();
 
   const {
     register,
@@ -39,9 +41,6 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
     },
   });
 
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   // Sync initialData with the form
   useEffect(() => {
     reset({
@@ -51,24 +50,20 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
     });
   }, [initialData, reset]);
 
-  // Helper to show temporary messages
-  const showMessage = (type: 'success' | 'error', message: string) => {
-    if (type === 'success') setSuccessMessage(message);
-    else setErrorMessage(message);
-
-    setTimeout(() => {
-      setSuccessMessage(null);
-      setErrorMessage(null);
-    }, 3000);
-  };
-
   const onSubmit = async (data: FormValues) => {
     try {
       await updateProfile(data);
-      showMessage('success', 'Profile updated successfully');
+      addNotification({
+        message: 'Profile updated successfully',
+        type: 'success',
+      });
     } catch (error) {
-      console.error('Error updating profile:', error);
-      showMessage('error', 'Failed to update profile');
+      if (error) {
+        addNotification({
+          message: 'Error updating profile',
+          type: 'error',
+        });
+      }
     }
   };
 
@@ -112,13 +107,6 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
           {isSubmitting ? 'Updating...' : 'Update Profile'}
         </button>
       </form>
-
-      {successMessage && (
-        <p className="text-green-600 text-xl mt-4">{successMessage}</p>
-      )}
-      {errorMessage && (
-        <p className="text-red-600 text-xl mt-4">{errorMessage}</p>
-      )}
     </div>
   );
 }
