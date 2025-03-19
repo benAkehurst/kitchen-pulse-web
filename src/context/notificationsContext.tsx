@@ -34,7 +34,7 @@ export const NotificationsContextProvider = ({
   const [loadingMessage, setLoadingMessage] = useState('');
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
-  const addNotification = (notification: NotificationType) => {
+  const addNotification = (notification: NotificationPartialType) => {
     const id = Math.random().toString(36);
     setNotifications((prevNotifications) => [
       ...prevNotifications,
