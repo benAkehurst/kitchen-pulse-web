@@ -39,8 +39,8 @@ if (isFeatureEnabled('enableAI')) {
 }
 
 const footer = [
-  { href: '/about-us', label: 'About us', id: 0 },
-  { href: '/contact-us', label: 'Contact us', id: 1 },
+  { href: '/', label: 'About us', id: 0 },
+  { href: '/', label: 'Contact us', id: 1 },
 ];
 
 const Sidebar = ({ onToggle }: SidebarProps) => {
