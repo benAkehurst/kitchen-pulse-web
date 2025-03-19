@@ -5,9 +5,17 @@ import {
   useNotifications,
 } from '@/context/notificationsContext';
 import { createPortal } from 'react-dom';
+import { useEffect, useState } from 'react';
 
 export const Notifications = () => {
   const { notifications, removeNotification } = useNotifications();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
 
   return createPortal(
     <div className="fixed top-4 left-4 z-[9999] flex flex-col gap-3">
