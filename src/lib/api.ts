@@ -11,7 +11,6 @@ const refreshAccessToken = async () => {
     localStorage.setItem("accessToken", data.accessToken);
     return data.accessToken;
   } catch (error) {
-    console.error("Refresh failed, logging out...");
     localStorage.removeItem("accessToken");
     window.location.href = "/"; // Redirect on refresh failure
     throw error; // Re-throw to cancel further requests

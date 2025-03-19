@@ -63,8 +63,12 @@ export default function SendMessageModal({
         );
         setUserSignature(signatureParts.join(', '));
       } catch (error) {
-        console.error('Error fetching user info:', error);
-        setError('Error fetching user info. Please try again.');
+        if (error) {
+          addNotification({
+            message: 'Error fetching dashboard data',
+            type: 'error',
+          });
+        }
       }
     };
 

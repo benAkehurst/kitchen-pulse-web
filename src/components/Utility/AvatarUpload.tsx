@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
 import Avatar from '../UI/Avatar';
+import { useNotifications } from '@/context/notificationsContext';
 
 interface AvatarUploadProps {
   initialAvatar?: string;
@@ -10,16 +11,12 @@ interface AvatarUploadProps {
 
 export default function AvatarUpload({ initialAvatar }: AvatarUploadProps) {
   const { uploadAvatar } = useUser();
-
+  const { addNotification } = useNotifications();
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     initialAvatar || undefined
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -32,18 +29,20 @@ export default function AvatarUpload({ initialAvatar }: AvatarUploadProps) {
       setIsUploading(true);
       const { data: uploadResponse } = await uploadAvatar(selectedFile);
       setAvatarPreview(uploadResponse.fileUrl);
-      showMessage('success', 'Avatar updated successfully');
+      addNotification({
+        message: 'Avatar updated successfully',
+        type: 'success',
+      });
     } catch (error) {
-      console.error('Error uploading avatar:', error);
-      showMessage('error', 'Failed to upload avatar');
+      if (error) {
+        addNotification({
+          message: 'Error uploading avatar',
+          type: 'error',
+        });
+      }
     } finally {
       setIsUploading(false);
     }
-  };
-
-  const showMessage = (type: 'success' | 'error', text: string) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
@@ -89,16 +88,6 @@ export default function AvatarUpload({ initialAvatar }: AvatarUploadProps) {
       )}
 
       {isUploading && <p className="text-blue-600">Uploading Avatar...</p>}
-
-      {message && (
-        <p
-          className={
-            message.type === 'success' ? 'text-green-600' : 'text-red-600'
-          }
-        >
-          {message.text}
-        </p>
-      )}
     </div>
   );
 }

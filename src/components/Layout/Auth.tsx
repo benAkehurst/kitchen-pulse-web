@@ -8,7 +8,7 @@ import { useNotifications } from '@/context/notificationsContext';
 
 export default function Login() {
   const { login } = useAuth();
-  const { setLoading, setLoadingMessage } = useNotifications();
+  const { setLoading } = useNotifications();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,12 +19,10 @@ export default function Login() {
     try {
       const { accessToken } = await login(email, password);
       setLoading(false);
-      setLoadingMessage('Logging in');
       router.push(`/dashboard?token=${accessToken}`);
     } catch (err) {
       if (err) {
         setLoading(false);
-        setLoadingMessage('');
         setError('Invalid credentials');
       }
     }

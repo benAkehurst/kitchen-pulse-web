@@ -8,6 +8,7 @@ import { useUser } from '@/hooks/useUser';
 import { Customer, Order, User } from '@/types/Models';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
+import { useNotifications } from '@/context/notificationsContext';
 
 interface DashboardData {
   customers: Customer[] | null;
@@ -20,6 +21,7 @@ export default function DashboardPage() {
   const { getUserInformation } = useUser();
   const { getCustomers } = useCustomer();
   const { getAllOrders } = useOrders();
+  const { addNotification } = useNotifications();
 
   const [data, setData] = useState<DashboardData>({
     customers: [],
@@ -38,7 +40,12 @@ export default function DashboardPage() {
         ]);
         setData({ customers, orders, user });
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        if (error) {
+          addNotification({
+            message: 'Error fetching dashboard data',
+            type: 'error',
+          });
+        }
       } finally {
         setLoading(false);
       }
