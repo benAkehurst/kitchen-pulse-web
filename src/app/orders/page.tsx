@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { Order } from '@/types/Models';
 import Modal from '@/components/UI/Modal';
@@ -10,53 +10,25 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
 export default function OrdersPage() {
-  const { getAllOrders, uploadPastOrders } = useOrders();
+  const {
+    orders,
+    ordersQuery: { isLoading: ordersLoading, isError: ordersError },
+  } = useOrders();
   const { addNotification } = useNotifications();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('dateDesc');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const ordersList = await getAllOrders();
-        setOrders(ordersList);
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching order data. Please try again.',
-            type: 'error',
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const isError = ordersError;
 
-  const handleAddOrder = () => {
-    const fetchData = async () => {
-      try {
-        const ordersList = await getAllOrders();
-        setOrders(ordersList);
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching order data. Please try again.',
-            type: 'error',
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  };
+  if (isError) {
+    addNotification({
+      message: 'Error fetching dashboard data',
+      type: 'error',
+    });
+  }
 
   const filteredOrders = orders
-    .filter((order) => {
+    .filter((order: Order) => {
       const searchFields = [
         order.orderId,
         order.associatedCustomer?.company,
@@ -66,7 +38,7 @@ export default function OrdersPage() {
         field?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     })
-    .sort((a, b) => {
+    .sort((a: Order, b: Order) => {
       if (sortOption === 'dateDesc') {
         return (
           new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
@@ -96,7 +68,7 @@ export default function OrdersPage() {
       </button>
 
       <Modal customId="addManualOrder">
-        <ManualOrderForm onOrderSubmit={handleAddOrder} />
+        <ManualOrderForm />
       </Modal>
     </>
   );
@@ -114,12 +86,12 @@ export default function OrdersPage() {
       </button>
 
       <Modal customId="uploadOrders">
-        <OrderFileUploadForm uploadPastOrders={uploadPastOrders} />
+        <OrderFileUploadForm />
       </Modal>
     </>
   );
 
-  if (loading) return <LoadingOverlay />;
+  if (ordersLoading) return <LoadingOverlay />;
 
   if (orders.length === 0)
     return (
@@ -161,7 +133,7 @@ export default function OrdersPage() {
         </select>
       </div>
 
-      {filteredOrders.map((order) => (
+      {filteredOrders.map((order: Order) => (
         <OrderCard key={order.externalId} {...order} />
       ))}
     </div>

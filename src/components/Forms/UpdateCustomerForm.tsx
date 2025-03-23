@@ -1,40 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 import LoadingOverlay from '../UI/LoadingOverlay';
 
-interface UpdateCustomerFormProps {
-  externalId: string;
-  onUpdateCustomer: (customer: Customer) => void;
-}
-
 export default function UpdateCustomerForm({
-  externalId,
-  onUpdateCustomer,
-}: UpdateCustomerFormProps) {
-  const { getSingleCustomer, updateSingleCustomer } = useCustomer();
+  singleCustomer,
+}: {
+  singleCustomer: Customer;
+}) {
+  const { updateSingleCustomer } = useCustomer();
   const { addNotification } = useNotifications();
-  const [formData, setFormData] = useState<Customer | null>(null);
+  const [formData, setFormData] = useState<Customer | null>(singleCustomer);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const customer = await getSingleCustomer(externalId);
-        setFormData(customer);
-      } catch {
-        addNotification({
-          message: 'Error fetching customer data. Please try again.',
-          type: 'error',
-        });
-      }
-    };
-
-    fetchCustomer();
-  }, [externalId]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -52,8 +32,7 @@ export default function UpdateCustomerForm({
     setIsSubmitting(true);
 
     try {
-      await updateSingleCustomer(formData);
-      onUpdateCustomer(formData);
+      await updateSingleCustomer.mutateAsync(formData);
       setIsSubmitting(false);
       addNotification({
         message: 'Customer updated successfully',

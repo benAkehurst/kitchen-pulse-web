@@ -8,6 +8,7 @@ import { metadata } from './metadata';
 import { usePathname } from 'next/navigation';
 import { NotificationsContextProvider } from '@/context/notificationsContext';
 import { Notifications } from '@/components/UI/Notifications';
+import QueryProvider from '@/context/queryClientProvider';
 
 const lato = Lato({
   weight: ['100', '300', '400', '700', '900'],
@@ -33,22 +34,24 @@ export default function RootLayout({
         <title>{metadata.title as string}</title>
         <meta name="description" content={metadata.description as string} />
       </head>
-      <NotificationsContextProvider>
-        <body className={`${lato.className} antialiased`}>
-          {/* Show Sidebar only when not on the login page */}
-          {!isLoginPage && <Sidebar onToggle={handleSidebarToggle} />}
-          <Notifications />
-          <main
-            className={`transition-all duration-300 pt-6 ${
-              !isLoginPage && isSidebarOpen
-                ? 'md:pl-80 md:pr-6'
-                : 'md:pl-24 md:pr-6'
-            }`}
-          >
-            {children}
-          </main>
-        </body>
-      </NotificationsContextProvider>
+      <QueryProvider>
+        <NotificationsContextProvider>
+          <body className={`${lato.className} antialiased`}>
+            {/* Show Sidebar only when not on the login page */}
+            {!isLoginPage && <Sidebar onToggle={handleSidebarToggle} />}
+            <Notifications />
+            <main
+              className={`transition-all duration-300 pt-6 ${
+                !isLoginPage && isSidebarOpen
+                  ? 'md:pl-80 md:pr-6'
+                  : 'md:pl-24 md:pr-6'
+              }`}
+            >
+              {children}
+            </main>
+          </body>
+        </NotificationsContextProvider>
+      </QueryProvider>
     </html>
   );
 }

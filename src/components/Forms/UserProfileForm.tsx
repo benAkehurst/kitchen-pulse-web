@@ -52,7 +52,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      await updateProfile(data);
+      await updateProfile.mutateAsync(data);
       addNotification({
         message: 'Profile updated successfully',
         type: 'success',

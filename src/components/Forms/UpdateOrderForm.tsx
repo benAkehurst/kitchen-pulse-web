@@ -1,46 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { Order, UpdatingOrder } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 import LoadingOverlay from '../UI/LoadingOverlay';
 
-interface UpdateOrderFormProps {
-  externalId: string;
-  onUpdateOrder: (order: Order) => void;
-}
-
 export default function UpdateOrderForm({
-  externalId,
-  onUpdateOrder,
-}: UpdateOrderFormProps) {
-  const { getSingleOrder, updateSingleOrder } = useOrders();
+  singleOrder,
+}: {
+  singleOrder: Order;
+}) {
+  const { updateSingleOrder } = useOrders();
   const { addNotification } = useNotifications();
-  const [formData, setFormData] = useState<UpdatingOrder | null>(null);
+  const [formData, setFormData] = useState<UpdatingOrder | Order | null>(
+    singleOrder
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const order = await getSingleOrder(externalId);
-        setFormData({
-          orderId: order.orderId,
-          orderItems: order.orderItems || '',
-          quantity: order.quantity || 0,
-          totalPrice: order.totalPrice || 0,
-          orderDate: order.orderDate || new Date().toISOString(),
-        });
-      } catch {
-        addNotification({
-          message: 'Error fetching order data. please try again.',
-          type: 'error',
-        });
-      }
-    };
-
-    fetchOrder();
-  }, [externalId]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -59,9 +35,10 @@ export default function UpdateOrderForm({
     setIsSubmitting(true);
 
     try {
-      await updateSingleOrder(externalId, formData);
-      const updatedOrder = await getSingleOrder(externalId);
-      onUpdateOrder(updatedOrder);
+      await updateSingleOrder.mutateAsync({
+        externalId: singleOrder.externalId,
+        orderData: formData as UpdatingOrder,
+      });
       setIsSubmitting(false);
       addNotification({
         message: 'Order updated successfully',

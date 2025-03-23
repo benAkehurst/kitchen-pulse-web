@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCustomer } from '@/hooks/useCustomer';
 import { Customer } from '@/types/Models';
 import CustomerCard from '@/components/Cards/CustomerCard';
@@ -10,41 +10,21 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
 export default function CustomersPage() {
-  const { getCustomers } = useCustomer();
-  const { addNotification } = useNotifications();
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const { addNotification } = useNotifications();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const customerList = await getCustomers();
-        setCustomers(customerList);
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching customer data',
-            type: 'error',
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const {
+    customers,
+    customersQuery: { isLoading: customersLoading, isError: customersError },
+  } = useCustomer();
 
-  const handleAddCustomer = (newCustomer: Customer) => {
-    setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
-  };
-
-  const filteredCustomers = customers.filter((customer) => {
-    const searchFields = [customer.company, customer.name];
-    return searchFields.some((field) =>
-      field?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredCustomers =
+    customers?.filter((customer: Customer) => {
+      const searchFields = [customer.company, customer.name];
+      return searchFields.some((field) =>
+        field?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }) || [];
 
   const addCustomer = (
     <>
@@ -59,12 +39,18 @@ export default function CustomersPage() {
       </button>
 
       <Modal customId="newCustomerModal">
-        <NewCustomerForm onAddCustomer={handleAddCustomer} />
+        <NewCustomerForm />
       </Modal>
     </>
   );
 
-  if (loading) return <LoadingOverlay />;
+  if (customersLoading) return <LoadingOverlay />;
+  if (customersError) {
+    addNotification({
+      message: 'Error fetching customers',
+      type: 'error',
+    });
+  }
 
   if (customers.length === 0)
     return (
@@ -92,7 +78,7 @@ export default function CustomersPage() {
         />
       </div>
 
-      {filteredCustomers.map((customer) => (
+      {filteredCustomers.map((customer: Customer) => (
         <CustomerCard key={customer.externalId} {...customer} />
       ))}
     </div>

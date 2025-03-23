@@ -1,25 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
-import { ManualOrder } from '@/types/Models';
+import { Customer, ManualOrder } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 
-interface ManualOrderFormProps {
-  onOrderSubmit: () => void;
-}
-
-export default function ManualOrderForm({
-  onOrderSubmit,
-}: ManualOrderFormProps) {
+export default function ManualOrderForm() {
   const { uploadManualOrder } = useOrders();
-  const { getCustomers } = useCustomer();
+  const {
+    customers,
+    customersQuery: { isLoading: customersLoading, isError: customersError },
+  } = useCustomer();
   const { addNotification } = useNotifications();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [customers, setCustomers] = useState<
-    { name: string; externalId: string }[]
-  >([]);
+
   const [formData, setFormData] = useState<ManualOrder>({
     externalCustomerId: '',
     orderItems: '',
@@ -27,21 +22,6 @@ export default function ManualOrderForm({
     totalPrice: 0,
     orderDate: new Date(),
   });
-
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const customerData = await getCustomers();
-        setCustomers(customerData);
-      } catch {
-        addNotification({
-          message: 'Error fetching customers. Please try again.',
-          type: 'error',
-        });
-      }
-    };
-    fetchCustomers();
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -60,8 +40,7 @@ export default function ManualOrderForm({
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await uploadManualOrder(formData);
-      onOrderSubmit();
+      await uploadManualOrder.mutateAsync(formData);
       setIsSubmitting(false);
       addNotification({
         message: 'Manual order submitted successfully.',
@@ -81,6 +60,16 @@ export default function ManualOrderForm({
     }
   };
 
+  const isLoading = customersLoading;
+  const isError = customersError;
+
+  if (isError && !isLoading) {
+    addNotification({
+      message: 'Error fetching customer data',
+      type: 'error',
+    });
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">Add Manual Order</h2>
@@ -95,7 +84,7 @@ export default function ManualOrderForm({
         <option value="" disabled>
           Select Customer
         </option>
-        {customers.map((customer) => (
+        {customers.map((customer: Customer) => (
           <option key={customer.externalId} value={customer.externalId}>
             {customer.name}
           </option>

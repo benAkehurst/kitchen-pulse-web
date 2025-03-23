@@ -27,7 +27,9 @@ export default function AvatarUpload({ initialAvatar }: AvatarUploadProps) {
     if (!selectedFile) return;
     try {
       setIsUploading(true);
-      const { data: uploadResponse } = await uploadAvatar(selectedFile);
+      const { data: uploadResponse } = await uploadAvatar.mutateAsync(
+        selectedFile
+      );
       setAvatarPreview(uploadResponse.fileUrl);
       addNotification({
         message: 'Avatar updated successfully',

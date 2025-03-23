@@ -2,14 +2,11 @@
 
 import { useState } from 'react';
 import { useNotifications } from '@/context/notificationsContext';
-interface OrderFileUploadFormProps {
-  uploadPastOrders: (file: File) => Promise<unknown>;
-}
+import { useOrders } from '@/hooks/useOrders';
 
-export default function OrderFileUploadForm({
-  uploadPastOrders,
-}: OrderFileUploadFormProps) {
+export default function OrderFileUploadForm() {
   const { addNotification } = useNotifications();
+  const { uploadPastOrders } = useOrders();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +21,7 @@ export default function OrderFileUploadForm({
 
     try {
       setIsUploading(true);
-      await uploadPastOrders(selectedFile);
+      await uploadPastOrders.mutateAsync(selectedFile);
       setIsSubmitting(false);
       addNotification({
         message: 'Order file uploaded successfully.',

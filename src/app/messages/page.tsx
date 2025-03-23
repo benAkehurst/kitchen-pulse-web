@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useMessages } from '@/hooks/useMessage';
-import { Customer, Message, Order } from '@/types/Models';
+import { useState } from 'react';
+import { Message } from '@/types/Models';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
+import { useMessages } from '@/hooks/useMessage';
 import Modal from '@/components/UI/Modal';
 import SendMessageModal from '@/components/Forms/SendMessageModal';
 import MessageCard from '@/components/Cards/MessageCard';
@@ -13,50 +13,40 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
 export default function MessagesPage() {
-  const { getAllMessages } = useMessages();
-  const { getCustomers } = useCustomer();
-  const { getAllOrders } = useOrders();
+  const {
+    messages,
+    messagesQuery: { isLoading: messagesLoading, isError: messagesError },
+  } = useMessages();
+  const {
+    customers,
+    customersQuery: { isLoading: customersLoading, isError: customersError },
+  } = useCustomer();
+  const {
+    orders,
+    ordersQuery: { isLoading: ordersLoading, isError: ordersError },
+  } = useOrders();
   const { addNotification } = useNotifications();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('dateDesc');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [messagesList, customerList, orderList] = await Promise.all([
-          getAllMessages(),
-          getCustomers(),
-          getAllOrders(),
-        ]);
-        setMessages(messagesList);
-        setCustomers(customerList);
-        setOrders(orderList);
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching message data. Please try again.',
-            type: 'error',
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const isLoading = customersLoading || ordersLoading || messagesLoading;
+  const isError = customersError || ordersError || messagesError;
 
-  const filteredMessages = messages
-    .filter((message) => {
+  if (isError) {
+    addNotification({
+      message: 'Error fetching dashboard data',
+      type: 'error',
+    });
+  }
+
+  const filteredMessages = (messages || [])
+    .filter((message: Message) => {
       const searchFields = [message.messageContents];
       return searchFields.some((field) =>
         field?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     })
-    .sort((a, b) => {
+    .sort((a: Message, b: Message) => {
       if (!a.createdAt || !b.createdAt) return 0; // Handle missing timestamps
 
       // Ensure createdAt is a Date object
@@ -95,8 +85,7 @@ export default function MessagesPage() {
     </>
   );
 
-  if (loading) return <LoadingOverlay />;
-
+  if (isLoading) return <LoadingOverlay />;
   if (messages.length === 0) return <div>No messages {sendMessageModal}</div>;
 
   return (

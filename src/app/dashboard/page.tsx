@@ -1,70 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import DashboardCard from '@/components/Cards/DashboardCard';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useUser } from '@/hooks/useUser';
-import { Customer, Order, User } from '@/types/Models';
-import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
-interface DashboardData {
-  customers: Customer[] | null;
-  orders: Order[] | null;
-  user: User | null;
-}
-
 export default function DashboardPage() {
-  const router = useRouter();
-  const { getUserInformation } = useUser();
-  const { getCustomers } = useCustomer();
-  const { getAllOrders } = useOrders();
   const { addNotification } = useNotifications();
 
-  const [data, setData] = useState<DashboardData>({
-    customers: [],
-    orders: [],
-    user: null,
-  });
-  const [loading, setLoading] = useState(true);
+  const {
+    customers,
+    customersQuery: { isLoading: customersLoading, isError: customersError },
+  } = useCustomer();
+  const {
+    orders,
+    ordersQuery: { isLoading: ordersLoading, isError: ordersError },
+  } = useOrders();
+  const {
+    user,
+    userQuery: { isLoading: userLoading, isError: userError },
+  } = useUser();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [customers, orders, user] = await Promise.all([
-          getCustomers(),
-          getAllOrders(),
-          getUserInformation(),
-        ]);
-        setData({ customers, orders, user });
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching dashboard data',
-            type: 'error',
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  const isLoading = customersLoading || ordersLoading || userLoading;
+  const isError = customersError || ordersError || userError;
 
-    fetchData();
-  }, []);
+  if (isError) {
+    addNotification({
+      message: 'Error fetching dashboard data',
+      type: 'error',
+    });
+  }
 
-  useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('token');
-    if (token) {
-      localStorage.setItem('accessToken', token);
-      router.replace('/dashboard');
-    }
-  }, []);
-
-  if (loading) return <LoadingOverlay />;
-
-  const { customers, orders, user } = data;
+  if (isLoading) return <LoadingOverlay />;
 
   return (
     <>

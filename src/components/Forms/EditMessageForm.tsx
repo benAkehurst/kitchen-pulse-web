@@ -49,7 +49,7 @@ export default function EditMessageForm({
     setIsSubmitting(true);
 
     try {
-      await editMessage(externalId, formData);
+      await editMessage.mutateAsync({ externalId, newContent: formData });
       setIsSubmitting(false);
       addNotification({
         message: 'Message updated successfully.',

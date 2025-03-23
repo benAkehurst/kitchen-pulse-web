@@ -14,7 +14,7 @@ export default function SendMessageWrapper({
   return (
     <>
       <button
-        className="btn btn-primary"
+        className="btn btn-accent"
         onClick={() =>
           // @ts-expect-error - HTML dialog method
           document.getElementById('sendMessageModal')!.showModal()

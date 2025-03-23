@@ -2,28 +2,29 @@
 
 import { useUser } from '@/hooks/useUser';
 import { useAuth } from '@/hooks/useAuth';
-import { User } from '@/types/Models';
-import { useEffect, useState } from 'react';
 import UserProfileForm from '@/components/Forms/UserProfileForm';
+import { useNotifications } from '@/context/notificationsContext';
+import LoadingOverlay from '@/components/UI/LoadingOverlay';
 
 export default function AccountPage() {
-  const { getUserInformation } = useUser();
+  const {
+    user,
+    userQuery: { isLoading: userLoading, isError: userError },
+  } = useUser();
   const { logout } = useAuth();
-  const [userInformation, setUserInformation] = useState<User>({
-    email: '',
-    name: '',
-    company: '',
-    telephone: '',
-    avatar: '',
-  });
+  const { addNotification } = useNotifications();
 
-  useEffect(() => {
-    const getUser = async () => {
-      const userInformation = await getUserInformation();
-      setUserInformation(userInformation);
-    };
-    getUser();
-  }, []);
+  const isLoading = userLoading;
+  const isError = userError;
+
+  if (isError) {
+    addNotification({
+      message: 'Error fetching dashboard data',
+      type: 'error',
+    });
+  }
+
+  if (isLoading) return <LoadingOverlay />;
 
   return (
     <div>
@@ -37,7 +38,7 @@ export default function AccountPage() {
         </button>
       </div>
       <div>
-        <UserProfileForm initialData={userInformation} />
+        <UserProfileForm initialData={user} />
       </div>
     </div>
   );

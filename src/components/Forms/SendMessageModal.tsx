@@ -17,8 +17,11 @@ export default function SendMessageModal({
   orders,
 }: SendMessageModalProps) {
   const { sendMessage } = useMessages();
-  const { getUserInformation } = useUser();
   const { addNotification } = useNotifications();
+  const {
+    user,
+    userQuery: { isLoading: userLoading, isError: userError },
+  } = useUser();
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -46,34 +49,20 @@ export default function SendMessageModal({
   }
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const user = await getUserInformation();
-        const { name, company, telephone, email } = user;
-
-        if (!name && !company && !telephone && !email) {
-          setError(
-            'Update your details on the /account page to use a signature.'
-          );
-          return;
-        }
-
-        const signatureParts = [name, company, telephone || email].filter(
-          Boolean
+    if (user && !userLoading && !userError) {
+      const { name, company, telephone, email } = user;
+      if (!name && !company && !telephone && !email) {
+        setError(
+          'Update your details on the /account page to use a signature.'
         );
-        setUserSignature(signatureParts.join(', '));
-      } catch (error) {
-        if (error) {
-          addNotification({
-            message: 'Error fetching dashboard data',
-            type: 'error',
-          });
-        }
+        return;
       }
-    };
-
-    fetchUserInfo();
-  }, []);
+      const signatureParts = [name, company, telephone || email].filter(
+        Boolean
+      );
+      setUserSignature(signatureParts.join(', '));
+    }
+  }, [user]);
 
   const handleNextStep = () => setStep((prev) => prev + 1);
   const handlePrevStep = () => setStep((prev) => prev - 1);
@@ -103,7 +92,7 @@ export default function SendMessageModal({
         ? `${formData.messageContents} - ${userSignature}`
         : formData.messageContents;
 
-      await sendMessage({
+      await sendMessage.mutateAsync({
         ...formData,
         customerExternalId: multipleRecipients
           ? selectedCustomers
@@ -207,7 +196,6 @@ export default function SendMessageModal({
               }
               className="select select-bordered"
             >
-              <option value="">Select Customer</option>
               {customers.map((customer) => (
                 <option key={customer.externalId} value={customer.externalId}>
                   {customer.name}{' '}

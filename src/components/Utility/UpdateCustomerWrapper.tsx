@@ -1,15 +1,13 @@
-import { Customer } from '@/types/Models';
 import Modal from '../UI/Modal';
 import UpdateCustomerForm from '../Forms/UpdateCustomerForm';
+import { Customer } from '@/types/Models';
 
 interface UpdateCustomerWrapper {
-  handleUpdatedCustomer: (updatedCustomer: Customer) => void;
-  externalId: string;
+  singleCustomer: Customer;
 }
 
 export default function UpdateCustomerWrapper({
-  handleUpdatedCustomer,
-  externalId,
+  singleCustomer,
 }: UpdateCustomerWrapper) {
   return (
     <div className="mr-4">
@@ -24,10 +22,7 @@ export default function UpdateCustomerWrapper({
       </button>
 
       <Modal customId="updateCustomerModal">
-        <UpdateCustomerForm
-          onUpdateCustomer={handleUpdatedCustomer}
-          externalId={externalId!}
-        />
+        <UpdateCustomerForm singleCustomer={singleCustomer!} />
       </Modal>
     </div>
   );

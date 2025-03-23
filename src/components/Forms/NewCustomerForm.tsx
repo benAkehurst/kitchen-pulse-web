@@ -14,13 +14,7 @@ const initialFormState: Customer = {
   contactable: false,
 };
 
-interface NewCustomerFormProps {
-  onAddCustomer: (customer: Customer) => void;
-}
-
-export default function NewCustomerForm({
-  onAddCustomer,
-}: NewCustomerFormProps) {
+export default function NewCustomerForm() {
   const { addCustomer } = useCustomer();
   const { addNotification } = useNotifications();
   const [formData, setFormData] = useState<Customer>(initialFormState);
@@ -51,7 +45,7 @@ export default function NewCustomerForm({
     }
 
     try {
-      const newCustomer = await addCustomer(formData);
+      const newCustomer = await addCustomer.mutateAsync(formData);
       // @ts-expect-error: ignore the axios any
       onAddCustomer(newCustomer);
       setIsSubmitting(false);

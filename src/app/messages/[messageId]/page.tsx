@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Message } from '@/types/Models';
+import { useParams, useRouter } from 'next/navigation';
 import { useMessages } from '@/hooks/useMessage';
 import Modal from '@/components/UI/Modal';
 import EditMessageForm from '@/components/Forms/EditMessageForm';
@@ -12,61 +11,50 @@ import Link from 'next/link';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
-const initialMessage: Message = {
-  externalCustomerReference: '',
-  repeat: false,
-  repeatUntil: new Date(),
-  scheduled: false,
-  sendOnDate: new Date(),
-  messageContents: '',
-  messageFormat: '',
-  messageSent: false,
-  externalId: '',
-  createdAt: undefined,
-  associatedCustomer: {
-    name: '',
-    company: '',
-    email: '',
-    telephone: '',
-    externalId: '',
-  },
-};
-
 export default function SingleMessage() {
   const router = useRouter();
-  const pathname = usePathname();
+  const { messageId } = useParams();
+  const { fetchSingleMessage, singleMessage, deleteMessage } = useMessages();
   const { addNotification } = useNotifications();
-  const { getSingleMessage, deleteMessage } = useMessages();
-  const [message, setMessage] = useState<Message>(initialMessage);
   const [loading, setLoading] = useState(true);
 
-  const messageId = pathname.split('/').pop();
-
   useEffect(() => {
+    setLoading(true);
     if (!messageId) return;
 
-    const fetchMessageData = async () => {
-      try {
-        const messageData = await getSingleMessage(messageId);
-        setMessage(messageData);
-      } catch (err) {
-        if (err) {
-          addNotification({
-            message: 'Error fetching message data. Please try again.',
-            type: 'error',
-          });
-        }
-      } finally {
+    fetchSingleMessage(messageId as string, {
+      onSuccess: () => setLoading(false),
+      onError: () => {
+        addNotification({
+          message: 'Error fetching message data. Please try again.',
+          type: 'error',
+        });
         setLoading(false);
-      }
-    };
-
-    fetchMessageData();
+      },
+    });
   }, [messageId]);
 
-  if (loading) return <LoadingOverlay />;
+  const handleDeleteMessage = async () => {
+    if (!messageId) return;
 
-  if (!message) return <div>Message not found</div>;
+    try {
+      await deleteMessage.mutateAsync(messageId as string);
+      addNotification({
+        message: 'Message deleted successfully',
+        type: 'success',
+      });
+    } catch (error) {
+      if (error) {
+        addNotification({
+          message: 'Error deleting message. Please try again.',
+          type: 'error',
+        });
+      }
+    }
+  };
+
+  if (loading) return <LoadingOverlay />;
+  if (!singleMessage) return <div>Message not found</div>;
 
   return (
     <div className="p-6">
@@ -90,75 +78,85 @@ export default function SingleMessage() {
             <Modal customId="editMessageModal">
               <EditMessageForm
                 externalId={messageId as string}
-                initialData={message}
+                initialData={singleMessage}
               />
             </Modal>
+            <button
+              className="btn btn-error ml-4"
+              onClick={handleDeleteMessage}
+            >
+              Delete message
+            </button>
           </>
         </div>
       </div>
 
       <h1 className="text-2xl font-semibold mb-4">Message Details</h1>
-      {message.associatedCustomer && (
+      {singleMessage.associatedCustomer && (
         <p className="mb-2 flex items-center gap-2">
           <User size={18} />
-          <strong>Customer:</strong> {message.associatedCustomer.name} (
-          {message.associatedCustomer.company})
+          <strong>Customer:</strong> {singleMessage.associatedCustomer.name} (
+          {singleMessage.associatedCustomer.company})
         </p>
       )}
       <p className="my-2 flex items-center gap-2">
         <Send size={18} />
-        <strong>Message:</strong> {message.messageContents}
+        <strong>Message:</strong> {singleMessage.messageContents}
       </p>
       <p className="my-2 flex items-center gap-2">
-        {message.associatedCustomer?.contactable ? (
+        {singleMessage.associatedCustomer?.contactable ? (
           <CheckCircle size={18} className="text-green-500" />
         ) : (
           <XCircle size={18} className="text-red-500" />
         )}
         <strong>Contactable:</strong>{' '}
-        {message.associatedCustomer?.contactable ? 'Yes' : 'No'}
+        {singleMessage.associatedCustomer?.contactable ? 'Yes' : 'No'}
       </p>
       <p className="my-2 flex items-center gap-2">
         <Mail size={18} />
-        <strong>Message Format:</strong> {message.messageFormat}
+        <strong>Message Format:</strong> {singleMessage.messageFormat}
       </p>
       <p className="my-2 flex items-center gap-2">
-        {message.scheduled ? (
+        {singleMessage.scheduled ? (
           <CheckCircle size={18} className="text-green-500" />
         ) : (
           <XCircle size={18} className="text-red-500" />
         )}
-        <strong>Scheduled:</strong> {message.scheduled ? 'Yes' : 'No'}
+        <strong>Scheduled:</strong> {singleMessage.scheduled ? 'Yes' : 'No'}
       </p>
-      {message.scheduled && (
+      {singleMessage.scheduled && (
         <p className="my-2 flex items-center gap-2">
           <Calendar size={18} />
           <strong>Send On:</strong>{' '}
-          {new Date(message.sendOnDate).toLocaleString()}
+          {new Date(singleMessage.sendOnDate).toLocaleString()}
         </p>
       )}
-      {message.messageSent && (
+      {singleMessage.messageSent && (
         <p className="my-2 flex items-center gap-2">
           <CheckCircle size={18} className="text-green-500" />
           Message Sent
         </p>
       )}
-      {message.messageSent && message.sendOnDate && (
+      {singleMessage.messageSent && singleMessage.sendOnDate && (
         <p className="my-2 flex items-center gap-2">
           <CheckCircle size={18} className="text-green-500" />
           This message was sent on{' '}
-          <strong>{format(new Date(message.sendOnDate), 'MMM d, yyyy')}</strong>
+          <strong>
+            {format(new Date(singleMessage.sendOnDate), 'MMM d, yyyy')}
+          </strong>
         </p>
       )}
-      {!message.messageSent && (
+      {!singleMessage.messageSent && (
         <button
           className="btn btn-error"
-          onClick={() =>
-            deleteMessage(message.externalId).then((res) => {
-              if (res) {
-                router.replace('/messages');
-              }
-            })
+          onClick={async () =>
+            await deleteMessage
+              .mutateAsync(singleMessage.externalId)
+              .then((res) => {
+                if (res) {
+                  router.replace('/messages');
+                }
+              })
           }
         >
           Delete Message

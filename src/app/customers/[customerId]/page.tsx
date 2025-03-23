@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
-import { Customer, Order } from '@/types/Models';
+import { Order } from '@/types/Models';
 import Link from 'next/link';
 import SendMessageWrapper from '@/components/Utility/SendMessageWrapper';
 import UpdateCustomerWrapper from '@/components/Utility/UpdateCustomerWrapper';
@@ -12,64 +12,78 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 
 export default function SingleCustomerPage() {
-  const pathname = usePathname();
-  const { getSingleCustomer } = useCustomer();
-  const { getOrdersByCustomer } = useOrders();
+  const { customerId } = useParams();
+  const { fetchSingleCustomer, singleCustomer, deleteCustomer } = useCustomer();
+  const { fetchOrdersByCustomer } = useOrders();
   const { addNotification } = useNotifications();
-  const [customer, setCustomer] = useState<Customer | null>(null);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortOption, setSortOption] = useState('dateDesc');
 
-  // Get customerId from the URL
-  const customerId = pathname.split('/').pop();
-
   useEffect(() => {
+    setLoading(true);
     if (!customerId) return;
 
-    const fetchCustomerData = async () => {
-      try {
-        // Fetch customer and orders in parallel
-        const [customerData, customerOrders] = await Promise.all([
-          getSingleCustomer(customerId),
-          getOrdersByCustomer(customerId),
-        ]);
-        setCustomer(customerData);
-        setOrders(customerOrders);
-      } catch (err) {
-        if (err) {
-          addNotification({
-            message: 'Error fetching customer data. Please try again.',
-            type: 'error',
-          });
-        }
-      } finally {
+    // Fetch the single customer
+    fetchSingleCustomer(customerId as string, {
+      onSuccess: () => setLoading(false),
+      onError: () => {
+        addNotification({
+          message: 'Error fetching customer data. Please try again.',
+          type: 'error',
+        });
         setLoading(false);
-      }
-    };
+      },
+    });
 
-    fetchCustomerData();
+    // Fetch orders separately
+    fetchOrdersByCustomer(customerId as string, {
+      onSuccess: (data) => setOrders(data),
+      onError: () => {
+        addNotification({
+          message: 'Error fetching orders. Please try again.',
+          type: 'error',
+        });
+      },
+    });
   }, [customerId]);
 
-  const handleUpdatedCustomer = (updatedCustomer: Customer) => {
-    setCustomer(updatedCustomer);
+  const handleDeleteCustomer = async () => {
+    if (!customerId) return;
+
+    try {
+      await deleteCustomer.mutateAsync(customerId as string);
+      addNotification({
+        message: 'Customer deleted successfully',
+        type: 'success',
+      });
+    } catch (error) {
+      if (error) {
+        addNotification({
+          message: 'Error deleting customer. Please try again.',
+          type: 'error',
+        });
+      }
+    }
   };
 
   const filteredOrders = orders.sort((a, b) => {
-    if (sortOption === 'dateDesc') {
-      return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
-    } else if (sortOption === 'dateAsc') {
-      return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
-    } else if (sortOption === 'priceDesc') {
-      return b.totalPrice - a.totalPrice;
-    } else if (sortOption === 'priceAsc') {
-      return a.totalPrice - b.totalPrice;
-    }
+    const dateA = new Date(a.orderDate).getTime() || 0;
+    const dateB = new Date(b.orderDate).getTime() || 0;
+
+    if (sortOption === 'dateDesc') return dateB - dateA;
+    if (sortOption === 'dateAsc') return dateA - dateB;
+    if (sortOption === 'priceDesc')
+      return (b.totalPrice || 0) - (a.totalPrice || 0);
+    if (sortOption === 'priceAsc')
+      return (a.totalPrice || 0) - (b.totalPrice || 0);
+
     return 0;
   });
 
   if (loading) return <LoadingOverlay />;
-  if (!customer) return <div>Customer not found</div>;
+  if (!singleCustomer) return <div>Customer not found</div>;
 
   return (
     <div className="p-6">
@@ -77,31 +91,32 @@ export default function SingleCustomerPage() {
         Back
       </Link>
       <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-3xl mb-4">{customer.name}</h1>
+        <h1 className="text-3xl mb-4">{singleCustomer.name}</h1>
         <div className="flex">
-          <UpdateCustomerWrapper
-            handleUpdatedCustomer={handleUpdatedCustomer}
-            externalId={customer.externalId as string}
-          />
-          <SendMessageWrapper customers={[customer]} orders={orders} />
+          <UpdateCustomerWrapper singleCustomer={singleCustomer} />
+          <SendMessageWrapper customers={[singleCustomer]} orders={orders} />
+          <button className="btn btn-error ml-4" onClick={handleDeleteCustomer}>
+            Delete customer
+          </button>
         </div>
       </div>
 
       <div className="mb-6">
         <p>
-          <strong>Company:</strong> {customer.company}
+          <strong>Company:</strong> {singleCustomer.company}
         </p>
         <p>
-          <strong>Email:</strong> {customer.email}
+          <strong>Email:</strong> {singleCustomer.email}
         </p>
         <p>
-          <strong>Telephone:</strong> {customer.telephone || 'N/A'}
+          <strong>Telephone:</strong> {singleCustomer.telephone || 'N/A'}
         </p>
         <p>
-          <strong>Address:</strong> {customer.address}
+          <strong>Address:</strong> {singleCustomer.address}
         </p>
         <p>
-          <strong>Contactable:</strong> {customer.contactable ? 'Yes' : 'No'}
+          <strong>Contactable:</strong>{' '}
+          {singleCustomer.contactable ? 'Yes' : 'No'}
         </p>
       </div>
 
