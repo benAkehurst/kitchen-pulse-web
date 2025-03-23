@@ -27,7 +27,7 @@ export default function OrdersPage() {
     });
   }
 
-  const filteredOrders = orders
+  const filteredOrders = (orders || [])
     .filter((order: Order) => {
       const searchFields = [
         order.orderId,
