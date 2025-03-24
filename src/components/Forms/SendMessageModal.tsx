@@ -6,6 +6,7 @@ import { useUser } from '@/hooks/useUser';
 import { Customer, Order, SendMessageData } from '@/types/Models';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useNotifications } from '@/context/notificationsContext';
+import { useParams } from 'next/navigation';
 
 interface SendMessageModalProps {
   customers: Customer[];
@@ -30,6 +31,9 @@ export default function SendMessageModal({
   const [multipleRecipients, setMultipleRecipients] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const params = useParams();
+
+  const currentCustomerId = params?.customerId;
 
   const [formData, setFormData] = useState<SendMessageData>({
     customerExternalId: [''],
@@ -41,12 +45,28 @@ export default function SendMessageModal({
     sendOnDate: undefined,
     multipleRecipients: false,
   });
+  console.log('formData: ', formData);
 
   const contactMethods = ['sms', 'email'];
 
   if (isFeatureEnabled('enableWhatsapp')) {
     contactMethods.splice(1, 0, 'whatsapp');
   }
+
+  useEffect(() => {
+    if (currentCustomerId) {
+      const foundCustomer = customers.find(
+        (c) => c.externalId === currentCustomerId
+      );
+      if (foundCustomer) {
+        setFormData((prev) => ({
+          ...prev,
+          customerExternalId: [foundCustomer.externalId!],
+        }));
+        setSelectedCustomers([foundCustomer.externalId!]); // Preselect in UI
+      }
+    }
+  }, [currentCustomerId, customers]);
 
   useEffect(() => {
     if (user && !userLoading && !userError) {
@@ -185,9 +205,7 @@ export default function SendMessageModal({
 
           {!multipleRecipients ? (
             <select
-              value={
-                multipleRecipients ? '' : formData.customerExternalId[0] || ''
-              }
+              value={formData.customerExternalId[0]}
               onChange={(e) =>
                 setFormData({
                   ...formData,
@@ -195,6 +213,7 @@ export default function SendMessageModal({
                 })
               }
               className="select select-bordered"
+              disabled={!!currentCustomerId} // Disable if preselected
             >
               {customers.map((customer) => (
                 <option key={customer.externalId} value={customer.externalId}>
