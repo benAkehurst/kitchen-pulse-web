@@ -7,12 +7,12 @@ import {
   X,
   Home,
   Users,
-  Package,
   MessageSquare,
   User,
   ChevronFirst,
   ChevronLast,
   Bot,
+  ShoppingCart,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
@@ -24,7 +24,7 @@ interface SidebarProps {
 const links = [
   { href: '/dashboard', label: 'Dashboard', icon: Home, id: 0 },
   { href: '/customers', label: 'Customers', icon: Users, id: 1 },
-  { href: '/orders', label: 'Orders', icon: Package, id: 2 },
+  { href: '/orders', label: 'Orders', icon: ShoppingCart, id: 2 },
   { href: '/messages', label: 'Messages', icon: MessageSquare, id: 3 },
   { href: '/account', label: 'Account', icon: User, id: 4 },
 ];

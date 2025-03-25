@@ -64,6 +64,13 @@ export default function SendMessageModal({
         }));
         setSelectedCustomers([foundCustomer.externalId!]); // Preselect in UI
       }
+    } else if (customers.length > 0) {
+      // Set the first customer as the initial selected customer
+      setFormData((prev) => ({
+        ...prev,
+        customerExternalId: [customers[0].externalId!],
+      }));
+      setSelectedCustomers([customers[0].externalId!]); // Preselect in UI
     }
   }, [currentCustomerId, customers]);
 

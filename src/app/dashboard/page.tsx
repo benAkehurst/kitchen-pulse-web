@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import DashboardCard from '@/components/Cards/DashboardCard';
 import { useOrders } from '@/hooks/useOrders';
 import { useCustomer } from '@/hooks/useCustomer';
@@ -8,7 +9,6 @@ import { useMessages } from '@/hooks/useMessage';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
-import { useEffect } from 'react';
 import SendMessageModal from '@/components/Forms/SendMessageModal';
 import NewCustomerForm from '@/components/Forms/NewCustomerForm';
 import Modal from '@/components/UI/Modal';
@@ -68,7 +68,6 @@ export default function DashboardPage() {
   }, [isError, addNotification]);
 
   if (isLoading) return <LoadingOverlay />;
-
   return (
     <>
       {/* User information */}
@@ -147,7 +146,7 @@ export default function DashboardPage() {
       <div className="divider"></div>
 
       {/* Dashboard Cards */}
-      <h2 className="text-2xl font-bold my-4">User Status</h2>
+      <h2 className="text-2xl font-bold my-4">Quick Links</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <DashboardCard
           cardName="Customers"
