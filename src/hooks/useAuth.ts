@@ -7,7 +7,7 @@ export const useAuth = () => {
   };
 
   const login = async (email: string, password: string) => {
-    const { data } = await api.post("/auth/login", { email, password });
+    const { data } = await api.post("/auth/login", { email, password }, { withCredentials: true });
     localStorage.setItem("accessToken", data.accessToken);
     axios.defaults.headers.Authorization = `Bearer ${data.accessToken}`; // Ensure immediate access
     return data;
