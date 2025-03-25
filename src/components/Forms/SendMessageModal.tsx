@@ -45,7 +45,6 @@ export default function SendMessageModal({
     sendOnDate: undefined,
     multipleRecipients: false,
   });
-  console.log('formData: ', formData);
 
   const contactMethods = ['sms', 'email'];
 
