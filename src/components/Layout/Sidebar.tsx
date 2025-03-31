@@ -39,8 +39,11 @@ if (isFeatureEnabled('enableAI')) {
 }
 
 const footer = [
-  { href: '/', label: 'About us', id: 0 },
-  { href: '/', label: 'Contact us', id: 1 },
+  {
+    href: 'https://www.kitchenpulse.co.uk/support',
+    label: 'Contact support',
+    id: 1,
+  },
 ];
 
 const Sidebar = ({ onToggle }: SidebarProps) => {
@@ -62,7 +65,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col justify-between bg-gray-600 text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
+        className={`hidden md:flex flex-col justify-between bg-primary text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
           isCollapsed ? 'w-20' : 'w-72'
         }`}
       >
