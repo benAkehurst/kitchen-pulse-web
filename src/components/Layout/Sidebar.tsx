@@ -89,7 +89,9 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
                 <Link
                   href={link.href}
                   className={`flex items-center p-2 rounded-lg ${
-                    pathname === link.href ? 'bg-gray-800' : 'hover:bg-gray-700'
+                    pathname === link.href
+                      ? 'bg-orange-400'
+                      : 'hover:bg-orange-700'
                   }`}
                 >
                   <link.icon className="w-6 h-6" />
@@ -106,7 +108,11 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
           <ul className="space-y-4">
             {footer.map((item) => (
               <li key={item.id}>
-                <Link href={item.href}>
+                <Link
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {!isCollapsed && (
                     <span className="ml-4 text-xl font-bold">{item.label}</span>
                   )}
@@ -149,8 +155,8 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
                     href={link.href}
                     className={`block p-2 rounded ${
                       pathname === link.href
-                        ? 'bg-gray-700'
-                        : 'hover:bg-gray-700'
+                        ? 'bg-orange-200'
+                        : 'hover:bg-orange-700'
                     }`}
                     onClick={closeMenu}
                   >
