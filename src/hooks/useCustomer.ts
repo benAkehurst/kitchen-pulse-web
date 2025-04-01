@@ -26,6 +26,17 @@ export const useCustomer = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
   });
 
+  const uploadCustomers = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return api.post("/customer/upload-customers", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+  });
+
   const updateSingleCustomer = useMutation({
     mutationFn: async (customerData: Customer) =>
       api.put(`/customer/update-customer?externalId=${customerData.externalId}`, customerData),
@@ -46,6 +57,7 @@ export const useCustomer = () => {
     singleCustomer,
     fetchSingleCustomer,
     addCustomer,
+    uploadCustomers,
     updateSingleCustomer,
     deleteCustomer
   };

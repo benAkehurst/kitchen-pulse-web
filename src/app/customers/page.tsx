@@ -8,6 +8,7 @@ import Modal from '@/components/UI/Modal';
 import NewCustomerForm from '@/components/Forms/NewCustomerForm';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
+import UploadCustomersForm from '@/components/Forms/UploadCustomersForm';
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +37,7 @@ export default function CustomersPage() {
   const addCustomer = (
     <>
       <button
-        className="btn btn-primary"
+        className="btn btn-secondary"
         onClick={() =>
           // @ts-expect-error - HTML dialog method
           document.getElementById('newCustomerModal')!.showModal()
@@ -47,6 +48,24 @@ export default function CustomersPage() {
 
       <Modal customId="newCustomerModal">
         <NewCustomerForm />
+      </Modal>
+    </>
+  );
+
+  const uploadCustomers = (
+    <>
+      <button
+        className="btn btn-primary mr-4"
+        onClick={() =>
+          // @ts-expect-error - HTML dialog method
+          document.getElementById('uploadCustomers')!.showModal()
+        }
+      >
+        Upload customers
+      </button>
+
+      <Modal customId="uploadCustomers">
+        <UploadCustomersForm />
       </Modal>
     </>
   );
@@ -71,7 +90,10 @@ export default function CustomersPage() {
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">Customers</h1>
 
-        {addCustomer}
+        <div className="flex">
+          {uploadCustomers}
+          {addCustomer}
+        </div>
       </div>
 
       {/* Filter Bar */}
