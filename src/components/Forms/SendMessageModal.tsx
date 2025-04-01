@@ -76,16 +76,14 @@ export default function SendMessageModal({
 
   useEffect(() => {
     if (user && !userLoading && !userError) {
-      const { name, company, telephone, email } = user;
-      if (!name && !company && !telephone && !email) {
+      const { name, company, mobile, email } = user;
+      if (!name && !company && !mobile && !email) {
         setError(
           'Update your details on the /account page to use a signature.'
         );
         return;
       }
-      const signatureParts = [name, company, telephone || email].filter(
-        Boolean
-      );
+      const signatureParts = [name, company, mobile || email].filter(Boolean);
       setUserSignature(signatureParts.join(', '));
     }
   }, [user]);
@@ -179,7 +177,7 @@ export default function SendMessageModal({
   const availableMessageTypes = useMemo(() => {
     if (!selectedCustomer) return [];
     const types = [];
-    if (selectedCustomer.telephone) types.push('sms', 'whatsapp');
+    if (selectedCustomer.mobile) types.push('sms', 'whatsapp');
     if (selectedCustomer.email) types.push('email');
     return types;
   }, [selectedCustomer]);

@@ -9,7 +9,7 @@ const initialFormState: Customer = {
   name: '',
   company: '',
   email: '',
-  telephone: '',
+  mobile: '',
   address: '',
   contactable: false,
 };
@@ -105,10 +105,10 @@ export default function NewCustomerForm() {
 
       <input
         type="tel"
-        name="telephone"
-        value={formData.telephone}
+        name="mobile"
+        value={formData.mobile}
         onChange={handleChange}
-        placeholder="Telephone"
+        placeholder="Mobile"
         className="input input-bordered w-full"
       />
 

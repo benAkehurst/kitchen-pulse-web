@@ -83,7 +83,7 @@ export default function MessageCard({ message }: MessageCardProps) {
           )}
           {associatedCustomer && (
             <div className="flex items-center gap-2">
-              <Phone size={16} /> {associatedCustomer.telephone}
+              <Phone size={16} /> {associatedCustomer.mobile}
             </div>
           )}
         </div>

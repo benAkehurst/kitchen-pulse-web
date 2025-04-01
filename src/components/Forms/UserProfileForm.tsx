@@ -12,7 +12,7 @@ import { useNotifications } from '@/context/notificationsContext';
 const userSchema = z.object({
   name: z.string().optional(),
   company: z.string().optional(),
-  telephone: z.string().optional(),
+  mobile: z.string().optional(),
   avatar: z.string().optional(),
 });
 
@@ -36,7 +36,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
     defaultValues: {
       name: initialData?.name || '',
       company: initialData?.company || '',
-      telephone: initialData?.telephone || '',
+      mobile: initialData?.mobile || '',
       avatar: initialData?.avatar || '',
     },
   });
@@ -46,7 +46,7 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
     reset({
       name: initialData.name || '',
       company: initialData.company || '',
-      telephone: initialData.telephone || '',
+      mobile: initialData.mobile || '',
     });
   }, [initialData, reset]);
 
@@ -91,10 +91,10 @@ export default function UserProfileForm({ initialData }: UserProfileFormProps) {
         </div>
 
         <div className="my-4">
-          <label className="block mb-2 text-xl">Telephone</label>
+          <label className="block mb-2 text-xl">Mobile</label>
           <input
-            {...register('telephone')}
-            placeholder="Telephone number"
+            {...register('mobile')}
+            placeholder="Mobile number"
             className="border p-2 w-full rounded-lg text-xl"
           />
         </div>

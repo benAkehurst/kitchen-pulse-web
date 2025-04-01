@@ -32,7 +32,7 @@ export default function TeamMembersPage() {
       const searchFields = [
         teamMember.name,
         teamMember.email,
-        teamMember.telephone,
+        teamMember.mobile,
         teamMember.role,
         teamMember.location,
       ];
@@ -84,7 +84,7 @@ export default function TeamMembersPage() {
       <div className="flex gap-4 mb-4">
         <input
           type="text"
-          placeholder="Search by Name, Email, Telephone, Role or Location"
+          placeholder="Search by Name, Email, Phone, Role or Location"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input input-bordered"

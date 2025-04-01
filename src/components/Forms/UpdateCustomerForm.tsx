@@ -91,10 +91,10 @@ export default function UpdateCustomerForm({
 
       <input
         type="tel"
-        name="telephone"
-        value={formData.telephone}
+        name="mobile"
+        value={formData.mobile}
         onChange={handleChange}
-        placeholder="Telephone"
+        placeholder="Mobile"
         className="input input-bordered w-full"
       />
 
