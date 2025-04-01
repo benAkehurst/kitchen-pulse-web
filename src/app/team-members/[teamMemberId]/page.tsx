@@ -60,11 +60,40 @@ export default function SingleOrderPage() {
       </Link>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-3xl mb-4">{singleTeamMember.teamMember.name}</h1>
-
-        <div className="flex">
+        <div className="flex flex-row items-start justify-evenly">
           <>
             <button
-              className="btn btn-accent ml-4"
+              className="btn btn-primary mr-2"
+              onClick={() =>
+                // @ts-expect-error - HTML dialog method
+                document.getElementById('sendMessageToTeamMember')!.showModal()
+              }
+            >
+              Send team member a message
+            </button>
+
+            <Modal customId="sendMessageToTeamMember">
+              <div>Send message form</div>
+            </Modal>
+          </>
+          <>
+            <button
+              className="btn btn-secondary mx-2"
+              onClick={() =>
+                // @ts-expect-error - HTML dialog method
+                document.getElementById('updateTeamMember')!.showModal()
+              }
+            >
+              Update team member details
+            </button>
+
+            <Modal customId="updateTeamMember">
+              <div>Update team member form</div>
+            </Modal>
+          </>
+          <>
+            <button
+              className="btn btn-accent mx-2"
               onClick={() =>
                 // @ts-expect-error - HTML dialog method
                 document.getElementById('uploadTeamMemberAvatar')!.showModal()
@@ -78,7 +107,7 @@ export default function SingleOrderPage() {
             </Modal>
           </>
           <button
-            className="btn btn-error ml-4"
+            className="btn btn-error ml-2"
             onClick={handleDeleteTeamMember}
           >
             Delete team member

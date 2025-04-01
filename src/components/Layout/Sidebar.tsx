@@ -34,7 +34,7 @@ const links = [
 if (isFeatureEnabled('enableAI')) {
   links.splice(5, 0, {
     href: '/assistant',
-    label: 'Assistant',
+    label: 'AI Assistant',
     icon: Bot,
     id: 6,
   });
