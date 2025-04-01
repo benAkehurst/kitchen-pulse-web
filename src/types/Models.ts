@@ -37,7 +37,7 @@ export interface User {
   email?: string;
   name?: string;
   avatar?: string;
-  telephone?: string;
+  mobile?: string;
   company?: string;
 }
 
@@ -77,12 +77,18 @@ export interface SendMessageData {
 }
 
 export interface Customer {
-  name: string;
-  company: string;
-  email: string;
-  telephone: string;
-  address: string;
-  contactable: boolean;
+  name?: string;
+  company?: string;
+  email?: string;
+  address?: string;
+  contactable?: boolean;
+  firstName?: string;
+  lastName?: string;
+  title?: string;
+  accountName?: string;
+  phone?: string;
+  mobile?: string;
+  source?: string;
   internalCustomerId?: string;
   externalId?: string;
 }
@@ -91,7 +97,7 @@ export interface AssociatedCustomer {
   name: string;
   company: string;
   email: string;
-  telephone: string;
+  mobile: string;
   externalId: string;
   contactable?: boolean
 }
@@ -100,7 +106,7 @@ export interface TeamMember {
   name: string;
   company: string;
   email: string;
-  telephone: string;
+  mobile: string;
   role: string;
   location: string;
   avatar: string;

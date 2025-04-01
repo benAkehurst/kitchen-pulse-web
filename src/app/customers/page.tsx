@@ -20,7 +20,14 @@ export default function CustomersPage() {
 
   const filteredCustomers =
     customers?.filter((customer: Customer) => {
-      const searchFields = [customer.company, customer.name];
+      const searchFields = [
+        customer.company,
+        customer.firstName,
+        customer.lastName,
+        customer.name,
+        customer.accountName,
+        customer.title,
+      ];
       return searchFields.some((field) =>
         field?.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -71,7 +78,7 @@ export default function CustomersPage() {
       <div className="flex gap-4 mb-4">
         <input
           type="text"
-          placeholder="Search by Company or Name"
+          placeholder="Search by Company, Name, Account or Title"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input input-bordered"

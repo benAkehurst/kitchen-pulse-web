@@ -4,20 +4,23 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useCustomer } from '@/hooks/useCustomer';
 import { useOrders } from '@/hooks/useOrders';
-import { Order } from '@/types/Models';
+import { Message, Order } from '@/types/Models';
 import Link from 'next/link';
 import SendMessageWrapper from '@/components/Utility/SendMessageWrapper';
 import UpdateCustomerWrapper from '@/components/Utility/UpdateCustomerWrapper';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
+import { useMessages } from '@/hooks/useMessage';
 
 export default function SingleCustomerPage() {
   const { customerId } = useParams();
   const { fetchSingleCustomer, singleCustomer, deleteCustomer } = useCustomer();
   const { fetchOrdersByCustomer } = useOrders();
+  const { fetchCustomerMessages } = useMessages();
   const { addNotification } = useNotifications();
 
   const [orders, setOrders] = useState<Order[]>([]);
+  const [customerMessages, setCustomerMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortOption, setSortOption] = useState('dateDesc');
 
@@ -43,6 +46,17 @@ export default function SingleCustomerPage() {
       onError: () => {
         addNotification({
           message: 'Error fetching orders. Please try again.',
+          type: 'error',
+        });
+      },
+    });
+
+    // Fetch messages separately
+    fetchCustomerMessages(customerId as string, {
+      onSuccess: (data) => setCustomerMessages(data),
+      onError: () => {
+        addNotification({
+          message: 'Error fetching messages. Please try again.',
           type: 'error',
         });
       },
@@ -82,6 +96,16 @@ export default function SingleCustomerPage() {
     return 0;
   });
 
+  const filteredMessages = customerMessages.sort((a, b) => {
+    const dateA = new Date(a.sendOnDate).getTime() || 0;
+    const dateB = new Date(b.sendOnDate).getTime() || 0;
+
+    if (sortOption === 'dateDesc') return dateB - dateA;
+    if (sortOption === 'dateAsc') return dateA - dateB;
+
+    return 0;
+  });
+
   if (loading) return <LoadingOverlay />;
   if (!singleCustomer) return <div>Customer not found</div>;
 
@@ -101,26 +125,94 @@ export default function SingleCustomerPage() {
         </div>
       </div>
 
-      <div className="mb-6">
-        <p>
-          <strong>Company:</strong> {singleCustomer.company}
-        </p>
-        <p>
-          <strong>Email:</strong> {singleCustomer.email}
-        </p>
-        <p>
-          <strong>Telephone:</strong> {singleCustomer.telephone || 'N/A'}
-        </p>
-        <p>
-          <strong>Address:</strong> {singleCustomer.address}
-        </p>
-        <p>
-          <strong>Contactable:</strong>{' '}
-          {singleCustomer.contactable ? 'Yes' : 'No'}
-        </p>
-      </div>
+      {singleCustomer.source === 'customerUpload' ? (
+        <div className="mb-6">
+          <p>
+            <strong>Name:</strong> {singleCustomer.firstName}{' '}
+            {singleCustomer.lastName}
+          </p>
+          <p>
+            <strong>Account Name:</strong> {singleCustomer.accountName}
+          </p>
+          <p>
+            <strong>Title:</strong> {singleCustomer.title}
+          </p>
+          <p>
+            <strong>Email:</strong> {singleCustomer.email}
+          </p>
+          <p>
+            <strong>Phone:</strong> {singleCustomer.phone || 'N/A'}
+          </p>
+          <p>
+            <strong>Mobile:</strong> {singleCustomer.mobile}
+          </p>
+          <p>
+            <strong>Contactable:</strong>{' '}
+            {singleCustomer.contactable ? 'Yes' : 'No'}
+          </p>
+        </div>
+      ) : (
+        <div className="mb-6">
+          <p>
+            <strong>Company:</strong> {singleCustomer.company}
+          </p>
+          <p>
+            <strong>Email:</strong> {singleCustomer.email}
+          </p>
+          <p>
+            <strong>Mobile:</strong> {singleCustomer.mobile || 'N/A'}
+          </p>
+          <p>
+            <strong>Address:</strong> {singleCustomer.address}
+          </p>
+          <p>
+            <strong>Contactable:</strong>{' '}
+            {singleCustomer.contactable ? 'Yes' : 'No'}
+          </p>
+        </div>
+      )}
 
-      <h2 className="text-2xl font-semibold mb-4">Orders</h2>
+      <h2 className="text-2xl font-semibold mb-4">Messages</h2>
+      {customerMessages.length === 0 ? (
+        <p>No messages found for this customer.</p>
+      ) : (
+        <>
+          {/* Filter Bar */}
+          <div className="flex gap-4 mb-4">
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="select select-bordered"
+            >
+              <option value="dateDesc">Date: Newest First</option>
+              <option value="dateAsc">Date: Oldest First</option>
+            </select>
+          </div>
+          <ul className="space-y-4">
+            {filteredMessages.map((message) => (
+              <li
+                key={message.externalId}
+                className="p-4 border rounded-lg shadow-sm"
+              >
+                <Link
+                  href={`/message/${message.externalId}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  <p>
+                    <strong>Message Contents:</strong> {message.messageContents}
+                  </p>
+                  <p>
+                    <strong>Message Date:</strong>{' '}
+                    {new Date(message.sendOnDate).toLocaleDateString()}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <h2 className="text-2xl font-semibold mt-4">Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found for this customer.</p>
       ) : (

@@ -21,6 +21,13 @@ export const useMessages = () => {
     },
   });
 
+  const { mutate: fetchCustomerMessages, data: customerMessages } = useMutation({
+    mutationFn: async (externalId: string) => {
+      const { data } = await api.get(`/message/get-messages-customer?externalId=${externalId}`);
+      return data;
+    },
+  });
+
   const sendMessage = useMutation({
     mutationFn: async (messageData: SendMessageData) =>
       api.post("/message/send-new-message", messageData),
@@ -41,8 +48,10 @@ export const useMessages = () => {
   return {
     messages,
     messagesQuery,
-    singleMessage,
     fetchSingleMessage,
+    singleMessage,
+    fetchCustomerMessages,
+    customerMessages,
     sendMessage,
     editMessage,
     deleteMessage,

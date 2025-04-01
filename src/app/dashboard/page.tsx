@@ -115,6 +115,28 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Show upload customers button */}
+      {customers.length === 0 && (
+        <div className="mb-6 grid grid-cols-1 gap-4">
+          <>
+            <button
+              className="p-4 bg-orange-800 text-white rounded shadow"
+              onClick={() =>
+                document
+                  .getElementById('dashboard-upload-customers')!
+                  // @ts-expect-error - HTML dialog method
+                  .showModal()
+              }
+            >
+              Upload customers
+            </button>
+            <Modal customId="dashboard-upload-customers">
+              <div>Upload customers form</div>
+            </Modal>
+          </>
+        </div>
+      )}
+
       {/* Quick Actions */}
       <h2 className="text-2xl font-bold my-4">Quick Actions</h2>
       <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
