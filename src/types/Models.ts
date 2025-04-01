@@ -95,3 +95,14 @@ export interface AssociatedCustomer {
   externalId: string;
   contactable?: boolean
 }
+
+export interface TeamMember {
+  name: string;
+  company: string;
+  email: string;
+  telephone: string;
+  role: string;
+  location: string;
+  avatar: string;
+  externalId?: string;
+}

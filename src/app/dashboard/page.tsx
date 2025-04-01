@@ -16,6 +16,7 @@ import Link from 'next/link';
 import OrderFileUploadForm from '@/components/Forms/OrderFileUploadForm';
 import Image from 'next/image';
 import AnalyticsCard from '@/components/Cards/AnalyticsCard';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 
 export default function DashboardPage() {
   const { addNotification } = useNotifications();
@@ -45,18 +46,28 @@ export default function DashboardPage() {
     dashboardQuery: { isLoading: dashboardLoading, isError: dashboardError },
   } = useAnalytics();
 
+  const {
+    teamMembers,
+    teamMembersQuery: {
+      isLoading: teamMembersLoading,
+      isError: teamMembersError,
+    },
+  } = useTeamMembers();
+
   const isLoading =
     customersLoading ||
     ordersLoading ||
     userLoading ||
     messagesLoading ||
-    dashboardLoading;
+    dashboardLoading ||
+    teamMembersLoading;
   const isError =
     customersError ||
     ordersError ||
     userError ||
     messagesError ||
-    dashboardError;
+    dashboardError ||
+    teamMembersError;
 
   useEffect(() => {
     if (isError) {
@@ -106,7 +117,7 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <h2 className="text-2xl font-bold my-4">Quick Actions</h2>
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
         <>
           <button
             className="p-4 bg-blue-500 text-white rounded shadow"
@@ -121,6 +132,12 @@ export default function DashboardPage() {
             <NewCustomerForm />
           </Modal>
         </>
+        <Link
+          href={`/team-members`}
+          className="p-4 bg-yellow-500 text-white rounded shadow text-center"
+        >
+          View team members
+        </Link>
         <Link
           href={`/orders`}
           className="p-4 bg-green-500 text-white rounded shadow text-center"
@@ -147,11 +164,16 @@ export default function DashboardPage() {
 
       {/* Dashboard Cards */}
       <h2 className="text-2xl font-bold my-4">Quick Links</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <DashboardCard
           cardName="Customers"
           itemCount={customers?.length}
           onwardLink="customers"
+        />
+        <DashboardCard
+          cardName="Team members"
+          itemCount={teamMembers?.length}
+          onwardLink="team-members"
         />
         <DashboardCard
           cardName="Orders"

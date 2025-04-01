@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Users, ShoppingCart, MessageSquare } from 'lucide-react';
+import { Users, ShoppingCart, MessageSquare, BookUser } from 'lucide-react';
 
 interface DashboardCardProps {
   cardName: string;
@@ -27,7 +27,7 @@ export default function DashboardCard({
     >
       <div className="flex items-center gap-3">
         {iconMap[cardName.toLowerCase() as keyof typeof iconMap] || (
-          <Users className="w-6 h-6 text-gray-500" />
+          <BookUser className="w-6 h-6 text-yellow-500" />
         )}
         <p className="text-lg font-semibold text-gray-700">{cardName}</p>
       </div>

@@ -13,6 +13,7 @@ import {
   ChevronLast,
   Bot,
   ShoppingCart,
+  BookUser,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
@@ -24,17 +25,18 @@ interface SidebarProps {
 const links = [
   { href: '/dashboard', label: 'Dashboard', icon: Home, id: 0 },
   { href: '/customers', label: 'Customers', icon: Users, id: 1 },
-  { href: '/orders', label: 'Orders', icon: ShoppingCart, id: 2 },
-  { href: '/messages', label: 'Messages', icon: MessageSquare, id: 3 },
-  { href: '/account', label: 'Account', icon: User, id: 4 },
+  { href: '/team-members', label: 'Team Members', icon: BookUser, id: 2 },
+  { href: '/orders', label: 'Orders', icon: ShoppingCart, id: 3 },
+  { href: '/messages', label: 'Messages', icon: MessageSquare, id: 4 },
+  { href: '/account', label: 'Account', icon: User, id: 5 },
 ];
 
 if (isFeatureEnabled('enableAI')) {
-  links.splice(4, 0, {
+  links.splice(5, 0, {
     href: '/assistant',
     label: 'Assistant',
     icon: Bot,
-    id: 5,
+    id: 6,
   });
 }
 
@@ -106,6 +108,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
 
         <section className="justify-end">
           <ul className="space-y-4">
+            {/* TODO: Make this into a modal  */}
             {footer.map((item) => (
               <li key={item.id}>
                 <Link
