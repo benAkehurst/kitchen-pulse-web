@@ -95,7 +95,8 @@ export interface Customer {
 
 export interface AssociatedCustomer {
   name: string;
-  company: string;
+  accountName: string;
+  title: string;
   email: string;
   mobile: string;
   externalId: string;

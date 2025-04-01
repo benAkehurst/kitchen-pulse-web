@@ -51,7 +51,7 @@ export default function MessageCard({ message }: MessageCardProps) {
         </div>
 
         {associatedCustomer && (
-          <p className="text-gray-600">{associatedCustomer.company}</p>
+          <p className="text-gray-600">{associatedCustomer.accountName}</p>
         )}
 
         <p className="text-gray-800">&quot;{messageContents}&quot;</p>
