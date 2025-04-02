@@ -66,7 +66,8 @@ export interface EditMessage {
 }
 
 export interface SendMessageData {
-  customerExternalId: Array<string>;
+  recipientType: string;
+  recipientExternalIds: Array<string>;
   messageContents: string;
   messageFormat: string;
   emailSubject?: string;
@@ -91,6 +92,7 @@ export interface Customer {
   source?: string;
   internalCustomerId?: string;
   externalId?: string;
+  recipientType?: string;
 }
 
 export interface AssociatedCustomer {

@@ -36,7 +36,8 @@ export default function SendMessageModal({
   const currentCustomerId = params?.customerId;
 
   const [formData, setFormData] = useState<SendMessageData>({
-    customerExternalId: [''],
+    recipientType: '',
+    recipientExternalIds: [''],
     messageContents: '',
     messageFormat: 'sms',
     emailSubject: '',
@@ -60,7 +61,8 @@ export default function SendMessageModal({
       if (foundCustomer) {
         setFormData((prev) => ({
           ...prev,
-          customerExternalId: [foundCustomer.externalId!],
+          recipientExternalIds: [foundCustomer.externalId!],
+          recipientType: foundCustomer.recipientType ?? 'customer',
         }));
         setSelectedCustomers([foundCustomer.externalId!]); // Preselect in UI
       }
@@ -68,7 +70,7 @@ export default function SendMessageModal({
       // Set the first customer as the initial selected customer
       setFormData((prev) => ({
         ...prev,
-        customerExternalId: [customers[0].externalId!],
+        recipientExternalIds: [customers[0].externalId!],
       }));
       setSelectedCustomers([customers[0].externalId!]); // Preselect in UI
     }
@@ -99,7 +101,7 @@ export default function SendMessageModal({
 
       setFormData((prevForm) => ({
         ...prevForm,
-        customerExternalId: newSelection.length > 0 ? newSelection : [''],
+        recipientExternalIds: newSelection.length > 0 ? newSelection : [''],
       }));
 
       return newSelection;
@@ -118,9 +120,9 @@ export default function SendMessageModal({
 
       await sendMessage.mutateAsync({
         ...formData,
-        customerExternalId: multipleRecipients
+        recipientExternalIds: multipleRecipients
           ? selectedCustomers
-          : formData.customerExternalId,
+          : formData.recipientExternalIds,
         messageContents: messageWithSignature,
         scheduled: isScheduled,
         multipleRecipients: multipleRecipients,
@@ -136,7 +138,8 @@ export default function SendMessageModal({
         3000
       );
       setFormData({
-        customerExternalId: [''],
+        recipientType: '',
+        recipientExternalIds: [''],
         messageContents: '',
         messageFormat: 'sms',
         emailSubject: '',
@@ -169,9 +172,9 @@ export default function SendMessageModal({
   const selectedCustomer = useMemo(
     () =>
       customers.find((c) =>
-        formData.customerExternalId.includes(c.externalId!)
+        formData.recipientExternalIds.includes(c.externalId!)
       ) || null,
-    [formData.customerExternalId, customers]
+    [formData.recipientExternalIds, customers]
   );
 
   const availableMessageTypes = useMemo(() => {
@@ -209,11 +212,11 @@ export default function SendMessageModal({
 
           {!multipleRecipients ? (
             <select
-              value={formData.customerExternalId[0]}
+              value={formData.recipientExternalIds[0]}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  customerExternalId: [e.target.value],
+                  recipientExternalIds: [e.target.value],
                 })
               }
               className="select select-bordered"
@@ -221,8 +224,8 @@ export default function SendMessageModal({
             >
               {customers.map((customer) => (
                 <option key={customer.externalId} value={customer.externalId}>
-                  {customer.name}{' '}
-                  {`: ${customer.company ? customer.company : ''}`}
+                  {customer.firstName} {customer.lastName}
+                  {`: ${customer.accountName ? customer.accountName : ''}`}
                 </option>
               ))}
             </select>
@@ -235,15 +238,15 @@ export default function SendMessageModal({
                 >
                   <input
                     type="checkbox"
-                    checked={formData.customerExternalId.includes(
+                    checked={formData.recipientExternalIds.includes(
                       customer.externalId!
                     )}
                     onChange={() =>
                       toggleCustomerSelection(customer.externalId!)
                     }
                   />
-                  {customer.name}{' '}
-                  {customer.company ? ` - ${customer.company}` : ''}
+                  {customer.firstName} {customer.lastName}
+                  {customer.accountName ? ` - ${customer.accountName}` : ''}
                 </label>
               ))}
             </div>
@@ -253,7 +256,8 @@ export default function SendMessageModal({
             <button className="btn" disabled>
               Back
             </button>
-            {(formData.customerExternalId || selectedCustomers.length > 0) && (
+            {(formData.recipientExternalIds ||
+              selectedCustomers.length > 0) && (
               <button className="btn btn-primary" onClick={handleNextStep}>
                 Next
               </button>
