@@ -125,52 +125,31 @@ export default function SingleCustomerPage() {
         </div>
       </div>
 
-      {singleCustomer.source === 'customerUpload' ? (
-        <div className="mb-6">
-          <p>
-            <strong>Name:</strong> {singleCustomer.firstName}{' '}
-            {singleCustomer.lastName}
-          </p>
-          <p>
-            <strong>Account Name:</strong> {singleCustomer.accountName}
-          </p>
-          <p>
-            <strong>Title:</strong> {singleCustomer.title}
-          </p>
-          <p>
-            <strong>Email:</strong> {singleCustomer.email}
-          </p>
-          <p>
-            <strong>Phone:</strong> {singleCustomer.phone || 'N/A'}
-          </p>
-          <p>
-            <strong>Mobile:</strong> {singleCustomer.mobile}
-          </p>
-          <p>
-            <strong>Contactable:</strong>{' '}
-            {singleCustomer.contactable ? 'Yes' : 'No'}
-          </p>
-        </div>
-      ) : (
-        <div className="mb-6">
-          <p>
-            <strong>Company:</strong> {singleCustomer.company}
-          </p>
-          <p>
-            <strong>Email:</strong> {singleCustomer.email}
-          </p>
-          <p>
-            <strong>Mobile:</strong> {singleCustomer.mobile || 'N/A'}
-          </p>
-          <p>
-            <strong>Address:</strong> {singleCustomer.address}
-          </p>
-          <p>
-            <strong>Contactable:</strong>{' '}
-            {singleCustomer.contactable ? 'Yes' : 'No'}
-          </p>
-        </div>
-      )}
+      <div className="mb-6">
+        <p>
+          <strong>Name:</strong> {singleCustomer.firstName}{' '}
+          {singleCustomer.lastName}
+        </p>
+        <p>
+          <strong>Account Name:</strong> {singleCustomer.accountName}
+        </p>
+        <p>
+          <strong>Title:</strong> {singleCustomer.title}
+        </p>
+        <p>
+          <strong>Email:</strong> {singleCustomer.email}
+        </p>
+        <p>
+          <strong>Phone:</strong> {singleCustomer.phone || 'N/A'}
+        </p>
+        <p>
+          <strong>Mobile:</strong> {singleCustomer.mobile}
+        </p>
+        <p>
+          <strong>Contactable:</strong>{' '}
+          {singleCustomer.contactable ? 'Yes' : 'No'}
+        </p>
+      </div>
 
       <h2 className="text-2xl font-semibold mb-4">Messages</h2>
       {customerMessages.length === 0 ? (
@@ -203,7 +182,7 @@ export default function SingleCustomerPage() {
                   </p>
                   <p>
                     <strong>Message Date:</strong>{' '}
-                    {new Date(message.sendOnDate).toLocaleDateString()}
+                    {new Date(message.createdAt!).toLocaleDateString()}
                   </p>
                 </Link>
               </li>

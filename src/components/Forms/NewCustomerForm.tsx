@@ -6,12 +6,15 @@ import { Customer } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 
 const initialFormState: Customer = {
-  name: '',
-  company: '',
+  firstName: '',
+  lastName: '',
+  title: '',
+  accountName: '',
   email: '',
   mobile: '',
-  address: '',
-  contactable: false,
+  phone: '',
+  source: 'customerUpload',
+  contactable: true,
 };
 
 export default function NewCustomerForm() {
@@ -35,9 +38,15 @@ export default function NewCustomerForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!formData.name || !formData.company || !formData.email) {
+    if (
+      !formData.firstName ||
+      !formData.title ||
+      !formData.email ||
+      !formData.mobile
+    ) {
       addNotification({
-        message: 'Name, Company, and Email are required. Please try again.',
+        message:
+          'Name, Title, Mobile and Email are required. Please try again.',
         type: 'error',
       });
       setIsSubmitting(false);
@@ -45,9 +54,7 @@ export default function NewCustomerForm() {
     }
 
     try {
-      const newCustomer = await addCustomer.mutateAsync(formData);
-      // @ts-expect-error: ignore the axios any
-      onAddCustomer(newCustomer);
+      await addCustomer.mutateAsync(formData);
       setIsSubmitting(false);
       addNotification({
         message: 'Customer added successfully.',
@@ -75,22 +82,40 @@ export default function NewCustomerForm() {
 
       <input
         type="text"
-        name="name"
-        value={formData.name}
+        name="firstName"
+        value={formData.firstName}
         onChange={handleChange}
-        placeholder="Customer Name"
+        placeholder="First Name*"
         className="input input-bordered w-full"
         required
       />
 
       <input
         type="text"
-        name="company"
-        value={formData.company}
+        name="lastName"
+        value={formData.lastName}
         onChange={handleChange}
-        placeholder="Company Name"
+        placeholder="Last Name"
+        className="input input-bordered w-full"
+      />
+
+      <input
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        placeholder="Title*"
         className="input input-bordered w-full"
         required
+      />
+
+      <input
+        type="text"
+        name="accountName"
+        value={formData.accountName}
+        onChange={handleChange}
+        placeholder="Account name"
+        className="input input-bordered w-full"
       />
 
       <input
@@ -98,7 +123,7 @@ export default function NewCustomerForm() {
         name="email"
         value={formData.email}
         onChange={handleChange}
-        placeholder="Email Address"
+        placeholder="Email Address*"
         className="input input-bordered w-full"
         required
       />
@@ -108,16 +133,18 @@ export default function NewCustomerForm() {
         name="mobile"
         value={formData.mobile}
         onChange={handleChange}
-        placeholder="Mobile"
+        placeholder="Mobile*"
         className="input input-bordered w-full"
+        required
       />
 
-      <textarea
-        name="address"
-        value={formData.address}
+      <input
+        type="tel"
+        name="phone"
+        value={formData.phone}
         onChange={handleChange}
-        placeholder="Address"
-        className="textarea textarea-bordered w-full"
+        placeholder="Phone"
+        className="input input-bordered w-full"
       />
 
       <label className="flex items-center space-x-2">

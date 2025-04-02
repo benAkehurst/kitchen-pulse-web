@@ -61,22 +61,40 @@ export default function UpdateCustomerForm({
 
       <input
         type="text"
-        name="name"
-        value={formData.name}
+        name="firstName"
+        value={formData.firstName}
         onChange={handleChange}
-        placeholder="Customer Name"
+        placeholder="First Name*"
         className="input input-bordered w-full"
         required
       />
 
       <input
         type="text"
-        name="company"
-        value={formData.company}
+        name="lastName"
+        value={formData.lastName}
         onChange={handleChange}
-        placeholder="Company Name"
+        placeholder="Last Name"
+        className="input input-bordered w-full"
+      />
+
+      <input
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        placeholder="Title*"
         className="input input-bordered w-full"
         required
+      />
+
+      <input
+        type="text"
+        name="accountName"
+        value={formData.accountName}
+        onChange={handleChange}
+        placeholder="Account name"
+        className="input input-bordered w-full"
       />
 
       <input
@@ -84,7 +102,7 @@ export default function UpdateCustomerForm({
         name="email"
         value={formData.email}
         onChange={handleChange}
-        placeholder="Email Address"
+        placeholder="Email Address*"
         className="input input-bordered w-full"
         required
       />
@@ -94,16 +112,18 @@ export default function UpdateCustomerForm({
         name="mobile"
         value={formData.mobile}
         onChange={handleChange}
-        placeholder="Mobile"
+        placeholder="Mobile*"
         className="input input-bordered w-full"
+        required
       />
 
-      <textarea
-        name="address"
-        value={formData.address}
+      <input
+        type="tel"
+        name="phone"
+        value={formData.phone}
         onChange={handleChange}
-        placeholder="Address"
-        className="textarea textarea-bordered w-full"
+        placeholder="Phone"
+        className="input input-bordered w-full"
       />
 
       <label className="flex items-center space-x-2">
