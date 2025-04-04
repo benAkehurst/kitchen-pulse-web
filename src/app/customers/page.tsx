@@ -107,9 +107,11 @@ export default function CustomersPage() {
         />
       </div>
 
-      {filteredCustomers.map((customer: Customer) => (
-        <CustomerCard key={customer.externalId} {...customer} />
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredCustomers.map((customer: Customer) => (
+          <CustomerCard key={customer.externalId} {...customer} />
+        ))}
+      </div>
     </div>
   );
 }

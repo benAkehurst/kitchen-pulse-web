@@ -133,9 +133,11 @@ export default function OrdersPage() {
         </select>
       </div>
 
-      {filteredOrders.map((order: Order) => (
-        <OrderCard key={order.externalId} {...order} />
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredOrders.map((order: Order) => (
+          <OrderCard key={order.externalId} {...order} />
+        ))}
+      </div>
     </div>
   );
 }

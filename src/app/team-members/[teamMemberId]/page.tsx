@@ -9,6 +9,7 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 import UpdateTeamMemberForm from '@/components/Forms/UpdateTeamMemberForm';
 import UploadTeamMemberAvatar from '@/components/Forms/UploadTeamMemberAvatar';
+import TeamMemberDetailsCard from '@/components/Cards/TeamMemberDetailsCard';
 
 export default function SingleOrderPage() {
   const { teamMemberId } = useParams();
@@ -119,7 +120,9 @@ export default function SingleOrderPage() {
         </div>
       </div>
 
-      <div className="mb-6">{singleTeamMember.teamMember.name}</div>
+      <div className="flex flex-col items-start justify-start">
+        <TeamMemberDetailsCard teamMember={singleTeamMember.teamMember} />
+      </div>
     </div>
   );
 }

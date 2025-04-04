@@ -7,6 +7,7 @@ import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 import Link from 'next/link';
 import NewTeamMemberForm from '@/components/Forms/NewTeamMemberForm';
+import TeamMemberCard from '@/components/Cards/TeamMemberCard';
 
 export default function TeamMembersPage() {
   const {
@@ -85,22 +86,24 @@ export default function TeamMembersPage() {
       <div className="flex gap-4 mb-4">
         <input
           type="text"
-          placeholder="Search by Name, Email, Phone, Role or Location"
+          placeholder="Search by name, email, mobile, role or location"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input input-bordered"
         />
       </div>
 
-      {filteredTeamMembers.map((teamMember: TeamMember) => (
-        <Link
-          key={teamMember.externalId}
-          href={`/team-members/${teamMember.externalId}`}
-          className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform my-4 hover:shadow-md"
-        >
-          {teamMember.name}
-        </Link>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredTeamMembers.map((teamMember: TeamMember) => (
+          <Link
+            key={teamMember.externalId}
+            href={`/team-members/${teamMember.externalId}`}
+            className="group"
+          >
+            <TeamMemberCard teamMember={teamMember} />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

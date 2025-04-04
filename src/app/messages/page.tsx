@@ -114,9 +114,11 @@ export default function MessagesPage() {
         </select>
       </div>
 
-      {filteredMessages.map((message: Message) => (
-        <MessageCard key={message.externalId} message={message} />
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredMessages.map((message: Message) => (
+          <MessageCard key={message.externalId} message={message} />
+        ))}
+      </div>
     </div>
   );
 }
