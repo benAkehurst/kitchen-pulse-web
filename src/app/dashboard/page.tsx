@@ -17,6 +17,7 @@ import OrderFileUploadForm from '@/components/Forms/OrderFileUploadForm';
 import Image from 'next/image';
 import AnalyticsCard from '@/components/Cards/AnalyticsCard';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
+import NewTeamMemberForm from '@/components/Forms/NewTeamMemberForm';
 
 export default function DashboardPage() {
   const { addNotification } = useNotifications();
@@ -78,6 +79,13 @@ export default function DashboardPage() {
     }
   }, [isError, addNotification]);
 
+  const handleHideUploadOrders = () => {
+    const uploadOrdersButton = document.getElementById('upload-orders-button');
+    if (uploadOrdersButton) {
+      uploadOrdersButton.style.display = 'none';
+    }
+  };
+
   if (isLoading) return <LoadingOverlay />;
   return (
     <>
@@ -97,16 +105,22 @@ export default function DashboardPage() {
 
       {/* Show upload orders button */}
       {orders.length === 0 && (
-        <div className="mb-6 grid grid-cols-1 gap-4">
+        <div
+          className="mb-6 flex flex-row items-center justify-between"
+          id="upload-orders-button"
+        >
           <>
             <button
-              className="p-4 bg-blue-800 text-white rounded shadow"
+              className="p-4 bg-blue-800 text-white rounded shadow w-full"
               onClick={() =>
                 // @ts-expect-error - HTML dialog method
                 document.getElementById('dashboard-upload-orders')!.showModal()
               }
             >
               Upload Orders
+            </button>
+            <button className="w-24 ml-2" onClick={handleHideUploadOrders}>
+              Hide this
             </button>
             <Modal customId="dashboard-upload-orders">
               <OrderFileUploadForm />
@@ -154,12 +168,21 @@ export default function DashboardPage() {
             <NewCustomerForm />
           </Modal>
         </>
-        <Link
-          href={`/team-members`}
-          className="p-4 bg-yellow-500 text-white rounded shadow text-center"
-        >
-          View team members
-        </Link>
+        <>
+          <button
+            className="p-4 bg-yellow-500 text-white rounded shadow"
+            onClick={() =>
+              // @ts-expect-error - HTML dialog method
+              document.getElementById('addNewTeamMember')!.showModal()
+            }
+          >
+            Add new team member
+          </button>
+
+          <Modal customId="addNewTeamMember">
+            <NewTeamMemberForm />
+          </Modal>
+        </>
         <Link
           href={`/orders`}
           className="p-4 bg-green-500 text-white rounded shadow text-center"
