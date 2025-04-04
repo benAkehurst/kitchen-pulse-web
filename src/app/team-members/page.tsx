@@ -6,6 +6,7 @@ import Modal from '@/components/UI/Modal';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 import Link from 'next/link';
+import NewTeamMemberForm from '@/components/Forms/NewTeamMemberForm';
 
 export default function TeamMembersPage() {
   const {
@@ -55,7 +56,7 @@ export default function TeamMembersPage() {
       </button>
 
       <Modal customId="addNewTeamMember">
-        <div>Add new team member form</div>
+        <NewTeamMemberForm />
       </Modal>
     </>
   );

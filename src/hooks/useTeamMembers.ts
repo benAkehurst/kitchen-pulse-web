@@ -15,7 +15,7 @@ export const useTeamMembers = () => {
   });
 
   const createSingleTeamMember = useMutation({
-    mutationFn: async ({ teamMemberData }: { teamMemberData: TeamMember }) => api.post(`/team/create-team-member`, teamMemberData),
+    mutationFn: async (teamMemberData: TeamMember) => api.post(`/team/create-team-member`, teamMemberData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["teamMembers"] }),
   })
 
@@ -27,7 +27,7 @@ export const useTeamMembers = () => {
   })
 
   const updateSingleTeamMember = useMutation({
-    mutationFn: async ({ externalId, teamMemberData }: { externalId: string; teamMemberData: TeamMeber }) =>
+    mutationFn: async ({ externalId, teamMemberData }: { externalId: string; teamMemberData: TeamMember }) =>
       api.put(`/team/update-single-team-member?externalId=${externalId}`, teamMemberData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["teamMembers"] }),
   })

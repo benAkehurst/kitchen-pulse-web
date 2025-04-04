@@ -107,11 +107,11 @@ export interface AssociatedCustomer {
 
 export interface TeamMember {
   name: string;
-  company: string;
-  email: string;
-  mobile: string;
   role: string;
-  location: string;
-  avatar: string;
+  mobile: string;
+  company?: string;
+  email?: string;
+  location?: string;
+  avatar?: string;
   externalId?: string;
 }
