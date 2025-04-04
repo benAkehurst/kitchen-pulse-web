@@ -41,7 +41,7 @@ export const useTeamMembers = () => {
     mutationFn: async ({ externalId, file }: { externalId: string; file: File }) => {
       const formData = new FormData();
       formData.append("file", file);
-      return api.post(`/team/upload-avatar?externalId=${externalId}`, formData, {
+      return api.put(`/team/upload-avatar?externalId=${externalId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     },
