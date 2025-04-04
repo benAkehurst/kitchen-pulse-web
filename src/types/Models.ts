@@ -109,7 +109,6 @@ export interface TeamMember {
   name: string;
   role: string;
   mobile: string;
-  company?: string;
   email?: string;
   location?: string;
   avatar?: string;

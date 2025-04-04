@@ -7,6 +7,7 @@ import Modal from '@/components/UI/Modal';
 import Link from 'next/link';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
+import UpdateTeamMemberForm from '@/components/Forms/UpdateTeamMemberForm';
 
 export default function SingleOrderPage() {
   const { teamMemberId } = useParams();
@@ -88,7 +89,9 @@ export default function SingleOrderPage() {
             </button>
 
             <Modal customId="updateTeamMember">
-              <div>Update team member form</div>
+              <UpdateTeamMemberForm
+                singleTeamMember={singleTeamMember.teamMember}
+              />
             </Modal>
           </>
           <>
