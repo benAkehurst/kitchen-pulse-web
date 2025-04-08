@@ -40,14 +40,6 @@ if (isFeatureEnabled('enableAI')) {
   });
 }
 
-const footer = [
-  {
-    href: 'https://www.kitchenpulse.co.uk/support',
-    label: 'Contact support',
-    id: 1,
-  },
-];
-
 const Sidebar = ({ onToggle }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -67,7 +59,7 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col justify-between bg-primary text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
+        className={`hidden md:flex flex-col justify-start bg-primary text-white h-screen p-6 fixed left-0 top-0 transition-all duration-300 z-10 ${
           isCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -105,25 +97,6 @@ const Sidebar = ({ onToggle }: SidebarProps) => {
             ))}
           </ul>
         </nav>
-
-        <section className="justify-end">
-          <ul className="space-y-4">
-            {/* TODO: Make this into a modal  */}
-            {footer.map((item) => (
-              <li key={item.id}>
-                <Link
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {!isCollapsed && (
-                    <span className="ml-4 text-xl font-bold">{item.label}</span>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
       </aside>
 
       {/* Mobile Menu Button */}
