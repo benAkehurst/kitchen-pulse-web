@@ -1,8 +1,8 @@
-import { TeamMember } from '@/types/Models';
+import { SingleTeamMember } from '@/types/Models';
 import Avatar from '../UI/Avatar';
 
 interface TeamMemberDetailsCardProps {
-  teamMember: TeamMember;
+  teamMember: SingleTeamMember;
 }
 
 export default function TeamMemberDetailsCard({

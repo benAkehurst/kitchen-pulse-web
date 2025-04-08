@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
-import { TeamMember } from '@/types/Models';
+import { SingleTeamMember } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 
-const initialFormState: TeamMember = {
+const initialFormState: SingleTeamMember = {
   name: '',
   role: '',
   mobile: '',
@@ -17,7 +17,7 @@ const initialFormState: TeamMember = {
 export default function NewTeamMemberForm() {
   const { createSingleTeamMember } = useTeamMembers();
   const { addNotification } = useNotifications();
-  const [formData, setFormData] = useState<TeamMember>(initialFormState);
+  const [formData, setFormData] = useState<SingleTeamMember>(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

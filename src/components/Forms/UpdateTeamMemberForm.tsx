@@ -2,18 +2,18 @@
 
 import { useState } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
-import { TeamMember } from '@/types/Models';
+import { SingleTeamMember, TeamMember } from '@/types/Models';
 import { useNotifications } from '@/context/notificationsContext';
 import LoadingOverlay from '../UI/LoadingOverlay';
 
 export default function UpdateTeamMemberForm({
   singleTeamMember,
 }: {
-  singleTeamMember: TeamMember;
+  singleTeamMember: SingleTeamMember;
 }) {
   const { updateSingleTeamMember } = useTeamMembers();
   const { addNotification } = useNotifications();
-  const [formData, setFormData] = useState<TeamMember>(singleTeamMember);
+  const [formData, setFormData] = useState<SingleTeamMember>(singleTeamMember);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

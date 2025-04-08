@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { TeamMember } from "@/types/Models";
+import { SingleTeamMember, TeamMember } from "@/types/Models";
 
 export const useTeamMembers = () => {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export const useTeamMembers = () => {
   });
 
   const createSingleTeamMember = useMutation({
-    mutationFn: async (teamMemberData: TeamMember) => api.post(`/team/create-team-member`, teamMemberData),
+    mutationFn: async (teamMemberData: SingleTeamMember) => api.post(`/team/create-team-member`, teamMemberData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["teamMembers"] }),
   })
 
@@ -27,7 +27,7 @@ export const useTeamMembers = () => {
   })
 
   const updateSingleTeamMember = useMutation({
-    mutationFn: async ({ externalId, teamMemberData }: { externalId: string; teamMemberData: TeamMember }) =>
+    mutationFn: async ({ externalId, teamMemberData }: { externalId: string; teamMemberData: SingleTeamMember }) =>
       api.put(`/team/update-single-team-member?externalId=${externalId}`, teamMemberData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["teamMembers"] }),
   })
