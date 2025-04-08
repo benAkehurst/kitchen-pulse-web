@@ -36,7 +36,7 @@ export default function SendMessageModal({
   const currentCustomerId = params?.customerId;
 
   const [formData, setFormData] = useState<SendMessageData>({
-    recipientType: '',
+    recipientType: 'customer',
     recipientExternalIds: [''],
     messageContents: '',
     messageFormat: 'sms',
@@ -200,13 +200,13 @@ export default function SendMessageModal({
               className={`btn ${!multipleRecipients ? 'btn-primary' : ''}`}
               onClick={() => setMultipleRecipients(false)}
             >
-              One Customer
+              Single customer
             </button>
             <button
               className={`btn ${multipleRecipients ? 'btn-primary' : ''}`}
               onClick={() => setMultipleRecipients(true)}
             >
-              Many Customers
+              Multiple customers
             </button>
           </div>
 

@@ -1,13 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
-import { TeamMember } from '@/types/Models';
+import { SingleTeamMember, TeamMember } from '@/types/Models';
 import Modal from '@/components/UI/Modal';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useNotifications } from '@/context/notificationsContext';
 import Link from 'next/link';
 import NewTeamMemberForm from '@/components/Forms/NewTeamMemberForm';
 import TeamMemberCard from '@/components/Cards/TeamMemberCard';
+import SendTeamMemberMessageForm from '@/components/Forms/SendTeamMemberMessageForm';
 
 export default function TeamMembersPage() {
   const {
@@ -21,6 +22,9 @@ export default function TeamMembersPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const isError = teamMembersError;
+  const isLoading = teamMembersLoading;
+
+  if (isLoading) return <LoadingOverlay />;
 
   if (isError) {
     addNotification({
@@ -30,7 +34,7 @@ export default function TeamMembersPage() {
   }
 
   const filteredTeamMembers = (teamMembers || []).filter(
-    (teamMember: TeamMember) => {
+    (teamMember: SingleTeamMember) => {
       const searchFields = [
         teamMember.name,
         teamMember.email,
@@ -62,13 +66,29 @@ export default function TeamMembersPage() {
     </>
   );
 
-  if (teamMembersLoading) return <LoadingOverlay />;
+  const newTeamMemberMessageModal = (
+    <>
+      <button
+        className="btn btn-secondary ml-4"
+        onClick={() =>
+          // @ts-expect-error - HTML dialog method
+          document.getElementById('sendNewMessage')!.showModal()
+        }
+      >
+        Send new message
+      </button>
+
+      <Modal customId="sendNewMessage">
+        <SendTeamMemberMessageForm teamMembers={teamMembers} />
+      </Modal>
+    </>
+  );
 
   if (teamMembers.length === 0)
     return (
       <div className="flex flex-row items-center justify-between">
         <p>No team members</p>
-        <div>{addNewTeamMemberModal}</div>
+        {addNewTeamMemberModal}
       </div>
     );
 
@@ -79,6 +99,7 @@ export default function TeamMembersPage() {
 
         <div className="flex flex-row items-center">
           {addNewTeamMemberModal}
+          {newTeamMemberMessageModal}
         </div>
       </div>
 
@@ -94,7 +115,7 @@ export default function TeamMembersPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredTeamMembers.map((teamMember: TeamMember) => (
+        {filteredTeamMembers.map((teamMember: SingleTeamMember) => (
           <Link
             key={teamMember.externalId}
             href={`/team-members/${teamMember.externalId}`}

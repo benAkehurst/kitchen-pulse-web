@@ -104,8 +104,20 @@ export interface AssociatedCustomer {
   externalId: string;
   contactable?: boolean
 }
-
 export interface TeamMember {
+  messages: Message[];
+  teamMember: {
+    name: string;
+    role: string;
+    mobile: string;
+    email?: string;
+    location?: string;
+    avatar?: string;
+    externalId?: string;
+  }
+}
+
+export interface SingleTeamMember {
   name: string;
   role: string;
   mobile: string;

@@ -10,7 +10,8 @@ import { useNotifications } from '@/context/notificationsContext';
 import UpdateTeamMemberForm from '@/components/Forms/UpdateTeamMemberForm';
 import UploadTeamMemberAvatar from '@/components/Forms/UploadTeamMemberAvatar';
 import TeamMemberDetailsCard from '@/components/Cards/TeamMemberDetailsCard';
-import { Message } from '@/types/Models';
+import { Message, SingleTeamMember } from '@/types/Models';
+import SendTeamMemberMessageForm from '@/components/Forms/SendTeamMemberMessageForm';
 
 export default function SingleOrderPage() {
   const { teamMemberId } = useParams();
@@ -56,6 +57,7 @@ export default function SingleOrderPage() {
   };
 
   const filteredMessages =
+    singleTeamMember &&
     singleTeamMember.messages &&
     singleTeamMember.messages.sort((a: Message, b: Message) => {
       const dateA = new Date(a.sendOnDate).getTime() || 0;
@@ -79,21 +81,25 @@ export default function SingleOrderPage() {
         <h1 className="text-3xl mb-4">{singleTeamMember.teamMember.name}</h1>
       </div>
       <div className="flex flex-row items-start justify-evenly my-4">
-        <>
-          <button
-            className="btn btn-primary mr-2"
-            onClick={() =>
-              // @ts-expect-error - HTML dialog method
-              document.getElementById('sendMessageToTeamMember')!.showModal()
-            }
-          >
-            Send team member a message
-          </button>
+        {singleTeamMember.teamMember && (
+          <>
+            <button
+              className="btn btn-primary mr-2"
+              onClick={() =>
+                // @ts-expect-error - HTML dialog method
+                document.getElementById('sendMessageToTeamMember')!.showModal()
+              }
+            >
+              Send team member a message
+            </button>
 
-          <Modal customId="sendMessageToTeamMember">
-            <div>Send message form</div>
-          </Modal>
-        </>
+            <Modal customId="sendMessageToTeamMember">
+              <SendTeamMemberMessageForm
+                teamMembers={[singleTeamMember.teamMember]}
+              />
+            </Modal>
+          </>
+        )}
         <>
           <button
             className="btn btn-secondary mx-2"
@@ -140,7 +146,6 @@ export default function SingleOrderPage() {
         <p>No messages found for team member.</p>
       ) : (
         <>
-          {/* Filter Bar */}
           <div className="flex gap-4 mb-4">
             <select
               value={sortOption}
